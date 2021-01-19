@@ -1,0 +1,304 @@
+TESTING URL: http://ec2-3-6-93-58.ap-south-1.compute.amazonaws.com:9481/ChatBoat/
+Production URL: https://backend.askpinkypromise.com/ChatBoat/
+
+###############################################################################################################
+************* API's for Contraception, Morning After & UTI **************
+1) getListTopics
+2) getQuestion
+3) getDiagnosticResult
+
+1)
+API Name: getListTopics
+Method: GET/POST
+request: None
+Response:
+{
+  "status": 200,
+  "message": "success",
+  "data": [
+    {
+      "TID": 1,
+      "Topic": "Contraception",
+      "TopicHeader": "What birthcontrol is right for you?",
+      "IntroMessages": [
+        {
+          "ID": 1,
+          "Message": "Pinky Promise cares for you. No matter the birth control option we provide you based on your options, please consider using a condom if you and your partner have not been tested for sexually transmitted infections (STIs), as that is the only fail-safe way to prevent sexually transmitted infections!",
+          "Response": "Okay"
+        },
+        {
+          "ID": 2,
+          "Message": "We want to understand how comfortable you'd be with trying out different types of contraceptives. The next set of questions helps us assess that.",
+          "Response": "Got it!"
+        }
+      ]
+    },
+    {
+      "TID": 2,
+      "Topic": "Morning after",
+      "TopicHeader": "Should you take emergency contraception?",
+      "IntroMessages": []
+    },
+    {
+      "TID": 3,
+      "Topic": "Fertility",
+      "TopicHeader": "Want to discuss fertility issues?",
+      "IntroMessages": []
+    },
+    {
+      "TID": 4,
+      "Topic": "UTI",
+      "TopicHeader": "Think you have a Urinary tract infection?",
+      "IntroMessages": []
+    },
+    {
+      "TID": 5,
+      "Topic": "Periods",
+      "TopicHeader": "Issue with periods? Or suspect you have PCOS?",
+      "IntroMessages": []
+    },
+    {
+      "TID": 6,
+      "Topic": "White Discharge",
+      "TopicHeader": "Think you have a Urinary tract infection?",
+      "IntroMessages": []
+    },
+    {
+      "TID": 7,
+      "Topic": "STIs",
+      "TopicHeader": "Do you suspect a sexually transmitted infection?",
+      "IntroMessages": []
+    }
+  ]
+}
+
+2)
+API Name: getQuestion
+Method: POST
+request1:
+{
+    "QID": "5", "TID": "1",
+    "SelectedOptions":[{"QID":1,"ID":1},{"QID":2,"ID":1},{"QID":5,"ID":2}]
+	"SelectedOptions":[{"QID":1,"ID":1},{"QID":5,"ID":2}] // when some them are multiselect options
+}
+Response1:
+{
+  "status": 200,
+  "message": "success",
+  "data": {
+    "TID": 2,
+    "QID": 21,
+    "Question": "How many hours have passed since you had unprotected sex?",
+    "OptionType": "option",
+    "Options": [
+      {
+        "ID": 1,
+        "Option": "72 hours or less(3 days)",
+        "Dest": true,
+        "NextRef": 15,
+        "RefType": "Diagnostic Result"
+      },
+      {
+        "ID": 2,
+        "Option": "More than 72 hours but less than 120 hours(5 days)",
+        "Dest": true,
+        "NextRef": 14,
+        "RefType": "Diagnostic Result"
+      },
+      {
+        "ID": 3,
+        "Option": "More than 120 hours( more than 5 days)",
+        "Dest": true,
+        "NextRef": 13,
+        "RefType": "Diagnostic Result"
+      }
+    ]
+  }
+}
+request2:
+{
+    "QID": "26", "TID": "4",
+    "SelectedOptions":[{"QID":22,"data":[{"ID":1},{"ID":2},{"ID":3}]},{"QID":23,"data":[{"ID":1},{"ID":2}]},{"QID":25,"ID":2}]
+}
+Response2:
+{
+  "status": 200,
+  "message": "success",
+  "data": {
+    "TID": 4,
+    "QID": 26,
+    "Question": "Have you contracted 4, or more than 4 UTIs in the past year?",
+    "OptionType": "option",
+    "Options": [
+      {
+        "ID": 1,
+        "Option": "Yes",
+        "Dest": true,
+        "NextRef": 20,
+        "RefType": ""
+      },
+      {
+        "ID": 2,
+        "Option": "No",
+        "Dest": true,
+        "NextRef": 18,
+        "RefType": ""
+      }
+    ]
+  }
+}
+
+3)
+API Name: getDiagnosticResult
+Method: POST
+request1: 
+{
+    "RefType":"",
+    "MsgId": 3, // NextRef of getQuestion API 
+    "TID": 1
+}
+Response1:
+{
+  "status": 200,
+  "message": "success",
+  "data": {
+    "TID": 1,
+    "MsgId": 3,
+    "Message": "Message: Injection: based on your response, it looks like an injection of depo-provera is most recommended for you. Click here to learn more about how yo use it, side effects etc. You can always press the back button to change your options!",
+    "RefType": "Diagnostic Result",
+    "RefID": 4
+  }
+}
+
+request2:
+{
+    "RefType":"Diagnostic Result", // RefType of getDiagnosticResult API
+    "MsgId": "3,2", // RefID of getDiagnosticResult API
+    "TID": 1
+}
+Response2:
+{
+  "status": 200,
+  "message": "success",
+  "data": [
+    {
+      "ID": 2,
+      "TID": 1,
+      "ResultType": "Result",
+      "Type": "IUS",
+      "Name": "IUSs(hormonal)",
+      "ResultData": [
+        {
+          "Header": "Summary",
+          "Info": "It's a simple T-shaped device put into uterus to prevent pregnancy. It releases the hormone progestin that prevents eggs from leaving your ovaries and also thickens the mucus around your cervix which prevents the sperm from reaching the egg. So, no sperm reaching egg, no fertilisation and no pregnancy."
+        },
+        {
+          "Header": "Effectiveness as a birth control",
+          "Info": "99% effective"
+        },
+        {
+          "Header": "How often do I have to use it?",
+          "Info": "You get it inserted once and you can forget about it. It is a long acting Reversible. Replacement timeline: Once in 3-5 years"
+        },
+        {
+          "Header": "How do I use it?",
+          "Info": "Inserted into Uterus by a doctor, screening required to determine position of the uterus; follow-up after fitting is required"
+        },
+        {
+          "Header": "How soon can I get pregnant if I stop?",
+          "Info": "Immediate"
+        },
+        {
+          "Header": "Average Price",
+          "Info": "Rs. 1000-4000 a pack"
+        },
+        {
+          "Header": "Side Effects that may make you uncomfortable",
+          "Info": "Headache, Acne, Breast tenderness, Irregular bleeding(which can improve after six months of use), Mood changes, Cramping or pelvic pain"
+        },
+        {
+          "Header": "Side effects that You may find helpful/ Advantages",
+          "Info": "Can help reduce cramp Helps lighten periods or stop them altogether Helps with anemia"
+        },
+        {
+          "Header": "Interactions with other Medicines",
+          "Info": ""
+        },
+        {
+          "Header": "Factors that might reduce efficacy",
+          "Info": ""
+        },
+        {
+          "Header": "Contraindication (Do not use if you have the following medical conditions)",
+          "Info": "Breast Cancer|Liver disease|Certain STDs or pelvic infection|Pregnancy Cervical cancer that hasn't been treated|Cancer of the uterus Uterine abnormalities"
+        }
+      ],
+      "MainMessage": "In your case IUSs(hormonal) may be a good fit\" - Learn more!\""
+    },
+    {
+      "ID": 3,
+      "TID": 1,
+      "ResultType": "Result",
+      "Type": "IUDs aka Copper-T",
+      "Name": "IUDs aka Copper-T (Intra-uterine device)",
+      "ResultData": [
+        {
+          "Header": "Summary",
+          "Info": "It's a simple T-shaped device put into uterus to prevent pregnancy. It's different from an IUS since it's non-hormonal. It's a flexible plastic with copper wrapped around it. The copper prevents the sperm from reaching the egg and hence, prevents pregnancy."
+        },
+        {
+          "Header": "Effectiveness as a birth control",
+          "Info": "99% effective"
+        },
+        {
+          "Header": "How often do I have to use it?",
+          "Info": "You get it inserted once and you can forget about it. It is a long acting Reversible and the average timeline it is kept varies from 3-12 years"
+        },
+        {
+          "Header": "How do I use it?",
+          "Info": "Inserted inside your uterus via the cervix by a medical health professional; the actual insertion of the IUD takes about 5 minutes, screening may be required to determine position of the uterus"
+        },
+        {
+          "Header": "How soon can I get pregnant if I stop?",
+          "Info": "Immediate"
+        },
+        {
+          "Header": "Average Price",
+          "Info": "Rs. 150-650 a piece"
+        },
+        {
+          "Header": "Side Effects that may make you uncomfortable",
+          "Info": "These are certain side effects that shall ideally resolve in the first 3-6 months, Pain when the IUD is placed, cramping or back aches for a few days after, spotting between periods, irregular periods, heavier or longer periods, cramping during your periods"
+        },
+        {
+          "Header": "Side effects that You may find helpful/ Advantages",
+          "Info": "Can help reduce cramp, Helps lighten periods or stop them altogether, Helps with anemia"
+        },
+        {
+          "Header": "Interactions with other Medicines",
+          "Info": ""
+        },
+        {
+          "Header": "Factors that might reduce efficacy",
+          "Info": ""
+        },
+        {
+          "Header": "Contraindication (Do not use if you have the following medical conditions)",
+          "Info": "Certain STDs or pelvic infection, Pregnancy, Cervical cancer, Uterine cancer, Uterine abnormalities, Copper allergies, Wilson's disease"
+        }
+      ],
+      "MainMessage": "In your case IUDs aka Copper-T (Intra-uterine device) may be a good fit\" - Learn more!\""
+    }
+  ]
+}
+
+###################################################################################################################
+
+TESTING URL: http://ec2-3-6-93-58.ap-south-1.compute.amazonaws.com:9481/ChatBoat1/
+Production URL: https://backend.askpinkypromise.com/ChatBoat1/
+
+************************* API's By Harshil *****************
+************* API's for Fertility, White Discharge & STI **************
+1) getQuestion
+2) getDiagnosis
+For Resuest & Response plz Refer "ChatBoat1" Folder

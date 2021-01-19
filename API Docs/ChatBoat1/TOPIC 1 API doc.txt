@@ -1,0 +1,165 @@
+TOPIC 1 -
+
+getQuestion
+
+request-
+{
+    "QID": null,
+    "TID": 3,
+    "SelectedOptions": [
+        {
+            "QID": 18,
+            "ID": 1,
+            "Option": "n"
+        },
+        {
+            "QID": 19,
+            "ID": 2,
+            "Option": "n"
+        }
+    ]
+}
+
+response-
+
+{
+    "_id": "5ff9867e71062b0dc4f5604a",
+    "QID": 1,
+    "TID": 3,
+    "Question": "Most fertility treatments typically start after trying sustainedly for more than 12 months of trying and not being able to conceive. Your best bet would be to keep trying. However, there may be some behavioral or underlying health conditions which may place you at a high risk for infertility. You can take our screening test to find out more and act sooner!",
+    "OptionType": "auto",
+    "Options": [
+        {
+            "ID": 1,
+            "Option": "Okay",
+            "Dest": false,
+            "NextRef": 2
+        }
+    ]
+}
+
+request - 2
+{
+    "QID": 5,
+    "TID": 3,
+    "SelectedOptions": []
+}
+
+response - 2
+{
+    "_id": "5ff9930671062b0dc4f5604e",
+    "QID": 5,
+    "TID": 3,
+    "Question": "Are you a habitual smoker?",
+    "OptionType": "option",
+    "Options": [
+        {
+            "ID": 1,
+            "Option": "Y",
+            "Dest": true,
+            "NextRef": 37
+        },
+        {
+            "ID": 2,
+            "Option": "N",
+            "Dest": false,
+            "NextRef": 6
+        }
+    ]
+}
+
+
+
+getDiagnosis
+
+request 1 -
+{
+    "MsgId": 3,
+    "TID": 3,
+    "SelectedOptions": []
+}
+
+response - 2
+{
+    "_id": "5ffaf91937bc5b24b02591a9",
+    "TID": 3,
+    "MsgId": 3,
+    "Message": "Ovarian reserve testing is done to determine the level of Anti-Mullerian Hormone (AMH). AMH levels are generally a good indicator of the quality and quantity of eggs. Sometimes, in addition to the AMH test, your estradiol and FSH levels are also detected (taken in the third day of the menstrual cycle). FSH levels above 12 mIU/mL are considered mildly elevated while levels above 15 mIU/mL are considered too high for using fertility enhancing medications. In case you do have a diminished ovarian reserve, one of the most common ways to treat it is through a supplement called dehydroepiandrosterone (DHEA), a mild androgen. If DHEA does not work, an IVF course, or preservation of eggs is advised. You can extract either your own eggs, or use donor eggs to get pregnant.  ",
+    "Destination": false,
+    "Diagnosis": true,
+    "NextRef": 4
+}
+
+
+request 2 
+{
+    "MsgId": null,
+    "TID": 3,
+    "age": 50,
+    "SelectedOptions": [
+  {
+    "QID" : 3,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 4,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 5,
+    "ID" : 1,
+    "Option": "y"
+
+  },
+  {
+    "QID" : 6,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 7,
+    "ID" : 1,
+    "Option": "y"
+
+  },
+  {
+    "QID" : 8,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 9,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 10,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 11,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 12,
+    "ID" : 2,
+    "Option": "n"
+  }
+]
+}
+
+Reponse 2 
+{
+    "_id": "5ffb20271f64541bcc45c0a6",
+    "TID": 3,
+    "MsgId": 23,
+    "Message": "You are at low risk of infertility when evaluated in light of the most common reasons for infertility. However, given you are above 35 years old, it may be advised to test your egg reserve to see if you have adequate quality eggs to carry out a pregnancy. Egg reserve can be determined by a blood test for the Anti- mullerian hormone - schedule one here!",
+    "Destination": false,
+    "Diagnosis": true,
+    "NextRef": 29,
+    "count": "You answered yes to 2 factors that are commonly associated with infertility."
+}
