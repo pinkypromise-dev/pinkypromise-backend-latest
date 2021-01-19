@@ -1,0 +1,232 @@
+BASE URL(Only for Testing): http://ec2-3-6-93-58.ap-south-1.compute.amazonaws.com:9481/ChatRooms/
+Production BaseURL: https://backend.askpinkypromise.com/ChatRooms/
+
+1)API Name: getListChatRooms
+    Request: 
+    {
+        "Token":""
+    }
+    Response:
+    {
+        "status": 200,
+        "message": "success",
+        "ChatRooms": [
+            {
+                "_id": "5fc137388df88fa60ca8c033",
+                "ID": 1,
+                "Name": "Sexual Wellness",
+                "ChatRoomID": "SexualWellness",
+                "Description": "Sexual Wellness",
+                "Avatar": "SW",
+                "Icon": "TBD"
+            },
+            {
+                "_id": "5fc138dd90d3393f48adff59",
+                "ID": 2,
+                "Name": "Pregnancy & Fertility",
+                "ChatRoomID": "PregnancyFertility",
+                "Description": "Pregnancy & Fertility",
+                "Avatar": "P & F",
+                "Icon": "TBD"
+            },
+            {
+                "_id": "6001dcb745eb6556446e1e90",
+                "ID": 3,
+                "Name": "PCOS & PCOD",
+                "ChatRoomID": "PCOSandPCOD",
+                "Description": "PCOS and PCOD",
+                "Avatar": "PCOS",
+                "Icon": "TBD"
+            },
+            {
+                "_id": "6001dcdc45eb6556446e1e91",
+                "ID": 4,
+                "Name": "Endometriosis",
+                "ChatRoomID": "Endometriosis",
+                "Description": "Endometriosis",
+                "Avatar": "ED",
+                "Icon": "TBD"
+            }
+        ]
+    }
+
+2)API Name: getUserChatRooms
+    Request-1: {
+	"userID":"5ff0b06304f271243f3c4290",
+        "Token":""
+    }
+    Response-1:
+    {
+        "status": 200,
+        "message": "success",
+        "data": {
+            "_id": "5ff0b06304f271243f3c4290",
+            "chatroomperference": []
+        }
+    }
+    Request-2: {
+	"userID":"60015dd0ac2d54635fd63855",
+        "Token":""
+    }
+    Response-2:
+    {
+        "status": 200,
+        "message": "success",
+        "data": {
+            "_id": "60015dd0ac2d54635fd63855",
+            "chatroomperference": [
+                {
+                    "InfoID": 1,
+                    "ChatRoomID": "SexualWellness",
+                    "ChatRoomName": "Sexual Wellness",
+                    "Priority": 1,
+                    "LatSeenMessageID": 0,
+                    "Active": true
+                },
+                {
+                    "InfoID": 2,
+                    "ChatRoomID": "PregnancyFertility",
+                    "ChatRoomName": "Pregnancy & Fertility",
+                    "Priority": 2,
+                    "LatSeenMessageID": 0,
+                    "Active": true
+                },
+                {
+                    "InfoID": 3,
+                    "ChatRoomID": "PCOSandPCOD",
+                    "ChatRoomName": "PCOS & PCOD",
+                    "Priority": 3,
+                    "LatSeenMessageID": 0,
+                    "Active": false
+                },
+                {
+                    "InfoID": 4,
+                    "ChatRoomID": "Endometriosis",
+                    "ChatRoomName": "Endometriosis",
+                    "Priority": 4,
+                    "LatSeenMessageID": 0,
+                    "Active": true
+                }
+                ]
+            }
+        }
+    }
+
+3)API Name: updateUserChatRooms
+    Request:
+    {
+	"userID":"60015dd0ac2d54635fd63855",
+	"Token":""
+	"data": [
+	    {
+	    "InfoID":1,
+            "ChatRoomID":"SexualWellness",
+            "ChatRoomName":"Sexual Wellness",
+            "Priority":1,
+            "LatSeenMessageID":0,
+            "Active": true
+	    },{
+            "InfoID":2,
+            "ChatRoomID":"PregnancyFertility",
+            "ChatRoomName":"Pregnancy & Fertility",
+            "Priority":2,
+            "LatSeenMessageID":0,
+            "Active": true
+	    },{
+            "InfoID":3,
+            "ChatRoomID":"PCOSandPCOD",
+            "ChatRoomName":"PCOS & PCOD",
+            "Priority":3,
+            "LatSeenMessageID":0,
+            "Active": false
+	    },{
+            "InfoID":4,
+            "ChatRoomID":"Endometriosis",
+            "ChatRoomName":"Endometriosis",
+            "Priority":4,
+            "LatSeenMessageID":0,
+            "Active": true
+	    }]
+    }
+    Rsponse:
+    {
+        "status": 200,
+        "message": "success"
+    }
+
+4)API Name: getMyChatRooms
+    Request:
+    {
+        "userID":"60015dd0ac2d54635fd63855",
+        "Token":""
+    }
+    Response:
+    {
+        "status": 200,
+        "message": "success",
+        "ChatRoomsInfo": [
+            {
+                "ChatRoomName": "Sexual Wellness",
+                "ChatRoomID": "SexualWellness",
+                "LatestMessage": null,
+                "LastSeenMessageID": 0,
+                "UnreadCount": 0,
+                "Avatar": "SW"
+            },{
+                "ChatRoomName": "Pregnancy & Fertility",
+                "ChatRoomID": "PregnancyFertility",
+                "LatestMessage": null,
+                "LastSeenMessageID": 0,
+                "UnreadCount": 0,
+                "Avatar": "P & F"
+            },{
+                "ChatRoomName": "Endometriosis",
+                "ChatRoomID": "Endometriosis",
+                "LatestMessage": null,
+                "LastSeenMessageID": 0,
+                "UnreadCount": 0,
+                "Avatar": "ED"
+            }
+        ]
+    }
+
+5) API Name: getMessages
+    Request:
+    {
+        "ChatRoomId":"SexualWellness",
+        "LastMsgId":"0",
+        "Token": ""
+    }
+    Response-1:
+    {
+        "status": 404,
+        "message": "Data Not Found"
+    }
+    Response-2:
+    {
+        "status": 200,
+        "message": "success",
+        "data": [
+            {
+                "ID": 1,
+                "UserID": "60015dd0ac2d54635fd63855",
+                "Avatar": "P",
+                "Type": "text",
+                "Text": "Testing Message"
+            }
+        ]
+    }
+
+6) API Name: UpdateChatRoomActivity
+    Request:
+    {
+        "userID": "60015dd0ac2d54635fd63855",
+        "ChatRoomID": "SexualWellness",
+        "LastSeenMessageID": "1",
+        "Token":""
+    }
+    Response:
+    {
+        "status": 200,
+        "message": "success"
+    }

@@ -1,0 +1,148 @@
+TOPIC 2
+
+getQuestion
+
+request 1
+
+{
+    "QID": 5,
+    "TID": 5,
+    "SelectedOptions": []
+}
+
+response 1
+
+{
+    "_id": "5ffcd57fe3c960233483a57a",
+    "QID": 5,
+    "TID": 5,
+    "Question": "How does your discharge look? ",
+    "OptionType": "option",
+    "Options": [
+        {
+            "ID": 1,
+            "Option": "Thick and clumpy (like watery paneer/cottage cheese)",
+            "Dest": false,
+            "NextRef": 6
+        },
+        {
+            "ID": 2,
+            "Option": "Thin and watery",
+            "Dest": false,
+            "NextRef": 6
+        }
+    ]
+}
+
+
+getDiagnosis
+
+request 1 
+{
+    "MsgId": null,
+    "TID": 5,
+    "age": 50,
+    "SelectedOptions": [
+  {
+    "QID" : 3,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 4,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 5,
+    "ID" : 1,
+    "Option": "y"
+
+  },
+  {
+    "QID" : 6,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 7,
+    "ID" : 1,
+    "Option": "y"
+
+  },
+  {
+    "QID" : 8,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 9,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 10,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 11,
+    "ID" : 2,
+    "Option": "n"
+  },
+  {
+    "QID" : 12,
+    "ID" : 2,
+    "Option": "n"
+  }
+]
+}
+
+response 1 
+{
+    "_id": "5ffcf478e3c960233483a592",
+    "TID": 5,
+    "MsgId": 16,
+    "Message": "Your vagina naturally has bacteria, which are good for you. Bacterial Vaginosis (BV) is a vaginal infection which is caused by the overgrowth of these bacteria which naturally occur in your vagina. BV is a commonly occuring infection and can have many underlying causes - having multiple sex partners or a new sex partner, using unnatural cleaning agents to clean your vagina (douching), and generally lacking lactobacilli (the good) bacteria. Getting rid of BV is really simple though so not to panic :)",
+    "Destination": false,
+    "Diagnosis": false,
+    "NextRef": 3,
+    "diagnosis2": true
+}
+
+IF diagnosis2 = true, set diagnosis2 as true in next request and pass NextRef to MsgId 
+
+request 2 
+{
+    "MsgId": 3,
+    "TID": 5,
+    "age": 50,
+    "SelectedOptions": [],
+    "diagnosis2": true
+}
+
+response 2
+
+{
+    "_id": "60001b7faa361b223cab6f33",
+    "ID": 3,
+    "TID": 5,
+    "ResultType": "Dropdown",
+    "Type": "",
+    "Name": "",
+    "ResultData": [
+        {
+            "Header": "What medications are available for BV",
+            "Info": "Clingen Forte is the most common medication for BV. It is a vaginal suppository (you insert it in your vagina and it dissolves into a cream - typically done overnight) made of Clindamycin, Clotrimazole and Tinidazole. Doctors prescribe this because it generally fights both bacterial as well as fungal infections in your vagina! You may also be prescribed any vaginal suppository containing metronidazole and clindamycin. These may also be prescribed in oral form if your menstrual cycle may come in the middle of the course!"
+        },
+        {
+            "Header": "How do I get tested",
+            "Info": "Based on your symptoms, your doctor will conduct a pelvic inspection to understand the type of discharge and look for signs of infection. In addition, your doctor may take a sample of your vaginal secretions so that she can examine them under a microscope"
+        },
+        {
+            "Header": "How to prevent recurrence",
+            "Info": "It is common for BV to recur, especially in an interval of 3-12 months. Avoid unprotected sex and douching. Your vagina is self cleaning so you do not need to use any artificial agents to clean your vagina! Eat plenty of curds and greek yogurt as these contain lactobacilli - the good bacteria to keep your vagina healthy!"
+        }
+    ]
+}
+

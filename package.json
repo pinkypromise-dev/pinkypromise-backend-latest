@@ -1,0 +1,40 @@
+{
+  "name": "pinkypromise",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Ankita",
+  "license": "ISC",
+  "dependencies": {
+    "2factor": "^1.0.6",
+    "@hapi/joi": "^15.1.0",
+    "@sendgrid/client": "^6.4.0",
+    "@sentry/node": "^5.6.1",
+    "aws-sdk": "^2.505.0",
+    "bcrypt": "^3.0.6",
+    "bcryptjs": "^2.4.3",
+    "connect-multiparty": "^2.2.0",
+    "cors": "^2.8.5",
+    "countrycitystatejson": "^0.2.16",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "generate-password": "^1.5.1",
+    "gm": "^1.23.1",
+    "jsonwebtoken": "^8.5.1",
+    "language-list": "0.0.3",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.32",
+    "mongoose": "^5.6.9",
+    "nexmo": "^2.9.1",
+    "node-fs": "^0.1.7",
+    "nodemailer": "^6.3.0",
+    "path": "^0.12.7",
+    "socket.io": "^3.1.0",
+    "twilio": "^3.55.0",
+    "validator": "^13.1.1"
+  }
+}

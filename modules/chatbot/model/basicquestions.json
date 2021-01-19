@@ -1,0 +1,514 @@
+[
+    {
+        "categoryid": "5f7b356c5189ca2c90483f5b",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f5c",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f63",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f62",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f5d",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f5e",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f60",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    },
+    {
+        "categoryid": "5f7b356c5189ca2c90483f61",
+        "quetionlist": [
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 1
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 2
+            },
+            {
+                "question": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+                "answerlist": [
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 10
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 5
+                    },
+                    {
+                        "answer": "Lorem Ipsum",
+                        "weightage": 0
+                    }
+                ],
+                "level": 3
+            }
+        ],
+        "possibleresultList": [
+            "High",
+            "Low",
+            "NO"
+        ]
+    }
+]

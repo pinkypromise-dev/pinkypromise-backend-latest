@@ -1,0 +1,128 @@
+TOPIC 3
+
+getQuestion
+
+request 1
+{
+    "QID": 12,
+    "TID": 6,
+    "SelectedOptions": []
+}
+
+response 1
+{
+    "_id": "600071ac83938207aceab478",
+    "QID": 12,
+    "TID": 6,
+    "Question": "is the discharge bloody?",
+    "OptionType": "option",
+    "Options": [
+        {
+            "ID": 1,
+            "Option": "Y",
+            "Dest": false,
+            "NextRef": 13
+        },
+        {
+            "ID": 2,
+            "Option": "N",
+            "Dest": false,
+            "NextRef": 13
+        }
+    ]
+}
+
+
+getDiagnosis
+
+request 1
+{
+    "MsgId": 2,
+    "TID": 6,
+    "SelectedOptions": [],
+}
+
+response 1
+{
+    "_id": "6000e02abadf8d053870f2d6",
+    "TID": 6,
+    "MsgId": 2,
+    "Message": "In your case, given your symptoms, are are unable to estimate with a reasonable degree of confidence if you have an STI and what that STI may be. It is always recommended to get tested for an STI if you feel discomfort or if you have had unprotected sexual intercourse. If you think you may not have accurately described your symptoms, feel free to press the back button at any time to go back to your responses!",
+    "Destination": false,
+    "Diagnosis": false,
+    "NextRef": -1
+}
+
+
+request 2
+{
+    "MsgId": 16,
+    "TID": 6,
+    "SelectedOptions": [
+  {
+    "QID" : 3,
+    "ID" : 2
+  },
+  {
+    "QID" : 22,
+    "ID" : 2
+  },
+  {
+    "QID" : 32,
+    "ID" : 1
+  },
+  {
+    "QID" : 14,
+    "ID" : 2
+  },
+  {
+    "QID" : 33,
+    "ID" : 2
+  },
+  {
+    "QID" : 34,
+    "ID" : 2
+  },
+  {
+    "QID" : 36,
+    "ID" : 2
+  },
+  {
+    "QID" : 37,
+    "ID" : 2
+  }
+]
+}
+
+response 2
+
+{
+    "_id": "60008be983938207aceab488",
+    "ID": 7,
+    "TID": 6,
+    "ResultType": "Dropdown",
+    "Type": "",
+    "Name": "Based on your responses, it looks like you may have a likelihood of Genital warts",
+    "ResultData": [
+        {
+            "Header": "What is the cause",
+            "Info": "Genital warts are caused by the Human Papillomavirus (HPV). According to the Mayo Clinic, nearly all sexually active people will become infected with at least one type of human papilloma virus during their lifetime. There are a large variety of genital warts - more than 40 strains, which affect the genital area. Often, HPV infections are asymptomatic but some strains of HPV can lead to cervical cancer as well as cancers of the anus, penis, and mouth. Genital warts Are typically brown or pink in color, but sometimes they can be so small and flat against the skin, that they can be invisible "
+        },
+        {
+            "Header": "What medications typically exist",
+            "Info": "Unfortunately, the virus that causes genital warts, cannot be treated. "
+        },
+        {
+            "Header": "How do I get tested",
+            "Info": "Genital warts are typically diagnosed by a physical examination of the area. For women, a pap smear can also detect human papillomavirus, which causes genital warts."
+        },
+        {
+            "Header": "How can I take further care to protect myself",
+            "Info": "Avoid unprotected sex and use a condom. If you decide to not use a condom, make sure that both you and your partner are tested for STIs before you decide to not use a condom.  Also make sure you get regular pap smears to enable early detection of HPV"
+        },
+        {
+            "Header": "What do I do now?",
+            "Info": "Get tested and have yourself examined by a provider. Also get tested for other STIs if you have not already! "
+        }
+    ]
+}

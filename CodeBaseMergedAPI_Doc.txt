@@ -1,0 +1,29 @@
+************Single Codebase for (UserModule, ChatBoat, ChatRooms)**************
+//By Ankitha(Modifications by Prabhu D)
+UserModule: /api/v1/"API Name"
+
+//By Prabhu D
+ChatBoat: /ChatBoat/"API Name"
+ChatBoatAPI's: [getListTopics,getQuestion,getDiagnosticResult]
+Topics covered: Contraception, Morning After & UTI
+
+//By Harshil
+ChatBoat: /ChatBoat1/"API Name"
+ChatBoatAPI's: [getQuestion,getDiagnosis]
+Topics covered: Fertility, White Discharge & STI
+
+//By Prabhu D
+ChatRooms: /ChatRooms/"API Name"
+ChatBoatAPI's: [getListChatRooms,getUserChatRooms,updateUserChatRooms,getMyChatRooms,getMessages,UpdateChatRoomActivity,SocketConnectionTesting]
+
+
+ACCESS FOR IMAGES
+ChatRooms: 
+(Example: http://localhost:5000/ChatRooms/noun_ovary_230343.svg)
+Testing URL: http://ec2-3-6-93-58.ap-south-1.compute.amazonaws.com:9483+"URL Recived from Database"
+Production URL: https://backend.askpinkypromise.com:9483+"URL Recived from Database"
+
+ChatBoat: 
+(Example: http://localhost:5000/ChatboatTopics/noun_fertilization_3606003.svg)
+Testing URL: http://ec2-3-6-93-58.ap-south-1.compute.amazonaws.com:9483+"URL Recived from Database"
+Production URL: https://backend.askpinkypromise.com:9483+"URL Recived from Database"
