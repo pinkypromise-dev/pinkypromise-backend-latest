@@ -80,9 +80,15 @@ async function getDiagnosis(req, res) {
                     ...result,
                     count: `You answered yes to ${filteredAnswers.length} factors that are commonly associated with infertility.`,
                   };
-                  if (result)
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
                     res.send({ status: 200, message: "success", data: result });
-                  else res.send({ status: 404, message: "Data Not Found" });
+                  } else res.send({ status: 404, message: "Data Not Found" });
                 }
               );
           });
@@ -101,9 +107,17 @@ async function getDiagnosis(req, res) {
                 if (err) throw err;
                 console.log(result);
                 db.close();
-                if (result)
+                if (result) {
+                  if (result.RefType === "Diagnostic Result") {
+                    result.RefType = "diagnosis";
+                  }
+                  if (result.RefType === "" && result.diagnosis2 === true) {
+                    result.RefType = "Diagnostic Result";
+                  }
                   res.send({ status: 200, message: "success", data: result });
-                else res.send({ status: 404, message: "Data Not Found" });
+                } else {
+                  res.send({ status: 404, message: "Data Not Found" });
+                }
               });
           });
         } catch (error) {
@@ -247,8 +261,8 @@ async function getDiagnosis(req, res) {
           selectedDiagnosis = 15;
       } else {
         console.log("else");
-        const { diagnosis2 } = req.body;
-        if (diagnosis2) {
+        const { RefType } = req.body;
+        if (RefType == "Diagnostic Result") {
           try {
             MongoClient.connect(url, function (err, db) {
               if (err) throw err;
@@ -259,9 +273,15 @@ async function getDiagnosis(req, res) {
                   if (err) throw err;
                   console.log(result);
                   db.close();
-                  if (result)
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
                     res.send({ status: 200, message: "success", data: result });
-                  else res.send({ status: 404, message: "Data Not Found" });
+                  } else res.send({ status: 404, message: "Data Not Found" });
                 });
             });
           } catch (error) {
@@ -279,9 +299,15 @@ async function getDiagnosis(req, res) {
                 if (err) throw err;
                 console.log(result);
                 db.close();
-                if (result)
+                if (result) {
+                  if (result.RefType === "Diagnostic Result") {
+                    result.RefType = "diagnosis";
+                  }
+                  if (result.RefType === "" && result.diagnosis2 === true) {
+                    result.RefType = "Diagnostic Result";
+                  }
                   res.send({ status: 200, message: "success", data: result });
-                else res.send({ status: 404, message: "Data Not Found" });
+                } else res.send({ status: 404, message: "Data Not Found" });
               });
           });
         } catch (error) {
@@ -328,9 +354,15 @@ async function getDiagnosis(req, res) {
                   info:
                     "Based on your responses, there may also be a chance that you may have an STI since pain during intercourse, and back/belly pain along with discolored discharge are indications of an infection. Based on your symptoms, you may have Gonorrhea since you have a green discharge however, if it is more yellowish, you may have Chlamydia. It is always a good idea to get tested for STIs as treating them and preventing them from becoming serious is quite simple. Please click here to learn more about Chlamydia and Gonorrhea. You can also go back to our STI screen if you want to do a more in-depth screen!",
                 };
-              if (result)
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
                 res.send({ status: 200, message: "success", data: result });
-              else res.send({ status: 404, message: "Data Not Found" });
+              } else res.send({ status: 404, message: "Data Not Found" });
             });
         });
       } catch (error) {
@@ -478,13 +510,22 @@ async function getDiagnosis(req, res) {
                         console.log(result);
                         db.close();
                         console.log(answers.length);
-                        if (result)
+                        if (result) {
+                          if (result.RefType === "Diagnostic Result") {
+                            result.RefType = "diagnosis";
+                          }
+                          if (
+                            result.RefType === "" &&
+                            result.diagnosis2 === true
+                          ) {
+                            result.RefType = "Diagnostic Result";
+                          }
                           res.send({
                             status: 200,
                             message: "success",
                             data: result,
                           });
-                        else
+                        } else
                           res.send({ status: 404, message: "Data Not Found" });
                       }
                     );
@@ -504,13 +545,22 @@ async function getDiagnosis(req, res) {
                       console.log(result);
                       db.close();
                       console.log(answers.length);
-                      if (result)
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
                         res.send({
                           status: 200,
                           message: "success",
                           data: result,
                         });
-                      else res.send({ status: 404, message: "Data Not Found" });
+                      } else res.send({ status: 404, message: "Data Not Found" });
                     });
                 });
               } catch (error) {
@@ -634,13 +684,22 @@ async function getDiagnosis(req, res) {
                         console.log(result);
                         db.close();
                         console.log(answers.length);
-                        if (result)
+                        if (result) {
+                          if (result.RefType === "Diagnostic Result") {
+                            result.RefType = "diagnosis";
+                          }
+                          if (
+                            result.RefType === "" &&
+                            result.diagnosis2 === true
+                          ) {
+                            result.RefType = "Diagnostic Result";
+                          }
                           res.send({
                             status: 200,
                             message: "success",
                             data: result,
                           });
-                        else
+                        } else
                           res.send({ status: 404, message: "Data Not Found" });
                       }
                     );
@@ -660,13 +719,22 @@ async function getDiagnosis(req, res) {
                       console.log(result);
                       db.close();
                       console.log(answers.length);
-                      if (result)
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
                         res.send({
                           status: 200,
                           message: "success",
                           data: result,
                         });
-                      else res.send({ status: 404, message: "Data Not Found" });
+                      } else res.send({ status: 404, message: "Data Not Found" });
                     });
                 });
               } catch (error) {
@@ -765,13 +833,23 @@ async function getDiagnosis(req, res) {
                       console.log(result);
                       db.close();
                       console.log(answers.length);
-                      if (result)
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
                         res.send({
                           status: 200,
                           message: "success",
                           data: result,
                         });
-                      else res.send({ status: 404, message: "Data Not Found" });
+                      } else
+                        res.send({ status: 404, message: "Data Not Found" });
                     }
                   );
               });
@@ -790,13 +868,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result)
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
                       res.send({
                         status: 200,
                         message: "success",
                         data: result,
                       });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   });
               });
             } catch (error) {
@@ -892,13 +976,23 @@ async function getDiagnosis(req, res) {
                       console.log(result);
                       db.close();
                       console.log(answers.length);
-                      if (result)
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
                         res.send({
                           status: 200,
                           message: "success",
                           data: result,
                         });
-                      else res.send({ status: 404, message: "Data Not Found" });
+                      } else
+                        res.send({ status: 404, message: "Data Not Found" });
                     }
                   );
               });
@@ -917,13 +1011,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result)
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
                       res.send({
                         status: 200,
                         message: "success",
                         data: result,
                       });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   });
               });
             } catch (error) {
@@ -1112,13 +1212,23 @@ async function getDiagnosis(req, res) {
                       console.log(result);
                       db.close();
                       console.log(answers.length);
-                      if (result)
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
                         res.send({
                           status: 200,
                           message: "success",
                           data: result,
                         });
-                      else res.send({ status: 404, message: "Data Not Found" });
+                      } else
+                        res.send({ status: 404, message: "Data Not Found" });
                     }
                   );
               });
@@ -1137,13 +1247,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result)
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
                       res.send({
                         status: 200,
                         message: "success",
                         data: result,
                       });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   });
               });
               return;
@@ -1163,9 +1279,15 @@ async function getDiagnosis(req, res) {
                 if (err) throw err;
                 console.log(result);
                 db.close();
-                if (result)
+                if (result) {
+                  if (result.RefType === "Diagnostic Result") {
+                    result.RefType = "diagnosis";
+                  }
+                  if (result.RefType === "" && result.diagnosis2 === true) {
+                    result.RefType = "Diagnostic Result";
+                  }
                   res.send({ status: 200, message: "success", data: result });
-                else res.send({ status: 404, message: "Data Not Found" });
+                } else res.send({ status: 404, message: "Data Not Found" });
               });
           });
           return;
@@ -1175,8 +1297,8 @@ async function getDiagnosis(req, res) {
       }
     }
     if (TID == 7) {
-      const { diagnosis2 } = req.body;
-      if (diagnosis2) {
+      const { RefType } = req.body;
+      if (RefType == "Diagnostic Result") {
         console.log("DIAGNOSIS 2");
         try {
           MongoClient.connect(url, function (err, db) {
@@ -1189,8 +1311,13 @@ async function getDiagnosis(req, res) {
                 console.log(result);
                 db.close();
                 if (result) {
+                  if (result.RefType === "Diagnostic Result") {
+                    result.RefType = "diagnosis";
+                  }
+                  if (result.RefType === "" && result.diagnosis2 === true) {
+                    result.RefType = "Diagnostic Result";
+                  }
                   res.send({ status: 200, message: "success", data: result });
-                  return;
                 } else res.send({ status: 404, message: "Data Not Found" });
                 return;
               });
@@ -1229,14 +1356,22 @@ async function getDiagnosis(req, res) {
                         console.log(result);
                         db.close();
                         console.log(answers.length);
-                        if (result)
+                        if (result) {
+                          if (result.RefType === "Diagnostic Result") {
+                            result.RefType = "diagnosis";
+                          }
+                          if (
+                            result.RefType === "" &&
+                            result.diagnosis2 === true
+                          ) {
+                            result.RefType = "Diagnostic Result";
+                          }
                           res.send({
                             status: 200,
                             message: "success",
                             data: result,
                           });
-                        else
-                          res.send({ status: 404, message: "Data Not Found" });
+                        } else res.send({ status: 404, message: "Data Not Found" });
                       });
                   });
                 } catch (error) {
@@ -1260,14 +1395,22 @@ async function getDiagnosis(req, res) {
                         console.log(result);
                         db.close();
                         console.log(answers.length);
-                        if (result)
+                        if (result) {
+                          if (result.RefType === "Diagnostic Result") {
+                            result.RefType = "diagnosis";
+                          }
+                          if (
+                            result.RefType === "" &&
+                            result.diagnosis2 === true
+                          ) {
+                            result.RefType = "Diagnostic Result";
+                          }
                           res.send({
                             status: 200,
                             message: "success",
                             data: result,
                           });
-                        else
-                          res.send({ status: 404, message: "Data Not Found" });
+                        } else res.send({ status: 404, message: "Data Not Found" });
                       });
                   });
                 } catch (error) {
@@ -1339,8 +1482,22 @@ async function getDiagnosis(req, res) {
                         console.log(result);
                         db.close();
                         console.log(answers.length);
-                        if (result) res.send({ ...result, count });
-                        else
+                        if (result) {
+                          if (result.RefType === "Diagnostic Result") {
+                            result.RefType = "diagnosis";
+                          }
+                          if (
+                            result.RefType === "" &&
+                            result.diagnosis2 === true
+                          ) {
+                            result.RefType = "Diagnostic Result";
+                          }
+                          res.send({
+                            status: 200,
+                            message: "success",
+                            data: { ...result, count },
+                          });
+                        } else
                           res.send({ status: 404, message: "Data Not Found" });
                       }
                     );
@@ -1379,13 +1536,22 @@ async function getDiagnosis(req, res) {
                               if (err) throw err;
                               console.log(result);
                               db.close();
-                              if (result)
+                              if (result) {
+                                if (result.RefType === "Diagnostic Result") {
+                                  result.RefType = "diagnosis";
+                                }
+                                if (
+                                  result.RefType === "" &&
+                                  result.diagnosis2 === true
+                                ) {
+                                  result.RefType = "Diagnostic Result";
+                                }
                                 res.send({
                                   status: 200,
                                   message: "success",
                                   data: result,
                                 });
-                              else
+                              } else
                                 res.send({
                                   status: 404,
                                   message: "Data Not Found",
@@ -1411,13 +1577,22 @@ async function getDiagnosis(req, res) {
                             if (err) throw err;
                             console.log(result);
                             db.close();
-                            if (result)
+                            if (result) {
+                              if (result.RefType === "Diagnostic Result") {
+                                result.RefType = "diagnosis";
+                              }
+                              if (
+                                result.RefType === "" &&
+                                result.diagnosis2 === true
+                              ) {
+                                result.RefType = "Diagnostic Result";
+                              }
                               res.send({
                                 status: 200,
                                 message: "success",
                                 data: result,
                               });
-                            else
+                            } else
                               res.send({
                                 status: 404,
                                 message: "Data Not Found",
@@ -1452,13 +1627,22 @@ async function getDiagnosis(req, res) {
                           if (err) throw err;
                           console.log(result);
                           db.close();
-                          if (result)
+                          if (result) {
+                            if (result.RefType === "Diagnostic Result") {
+                              result.RefType = "diagnosis";
+                            }
+                            if (
+                              result.RefType === "" &&
+                              result.diagnosis2 === true
+                            ) {
+                              result.RefType = "Diagnostic Result";
+                            }
                             res.send({
                               status: 200,
                               message: "success",
                               data: result,
                             });
-                          else
+                          } else
                             res.send({
                               status: 404,
                               message: "Data Not Found",
@@ -1494,13 +1678,22 @@ async function getDiagnosis(req, res) {
                           if (err) throw err;
                           console.log(result);
                           db.close();
-                          if (result)
+                          if (result) {
+                            if (result.RefType === "Diagnostic Result") {
+                              result.RefType = "diagnosis";
+                            }
+                            if (
+                              result.RefType === "" &&
+                              result.diagnosis2 === true
+                            ) {
+                              result.RefType = "Diagnostic Result";
+                            }
                             res.send({
                               status: 200,
                               message: "success",
                               data: result,
                             });
-                          else
+                          } else
                             res.send({
                               status: 404,
                               message: "Data Not Found",
@@ -1548,13 +1741,22 @@ async function getDiagnosis(req, res) {
                           if (err) throw err;
                           console.log(result);
                           db.close();
-                          if (result)
+                          if (result) {
+                            if (result.RefType === "Diagnostic Result") {
+                              result.RefType = "diagnosis";
+                            }
+                            if (
+                              result.RefType === "" &&
+                              result.diagnosis2 === true
+                            ) {
+                              result.RefType = "Diagnostic Result";
+                            }
                             res.send({
                               status: 200,
                               message: "success",
                               data: result,
                             });
-                          else
+                          } else
                             res.send({
                               status: 404,
                               message: "Data Not Found",
@@ -1578,13 +1780,22 @@ async function getDiagnosis(req, res) {
                           if (err) throw err;
                           console.log(result);
                           db.close();
-                          if (result)
+                          if (result) {
+                            if (result.RefType === "Diagnostic Result") {
+                              result.RefType = "diagnosis";
+                            }
+                            if (
+                              result.RefType === "" &&
+                              result.diagnosis2 === true
+                            ) {
+                              result.RefType = "Diagnostic Result";
+                            }
                             res.send({
                               status: 200,
                               message: "success",
                               data: result,
                             });
-                          else
+                          } else
                             res.send({
                               status: 404,
                               message: "Data Not Found",
@@ -1757,13 +1968,22 @@ async function getDiagnosis(req, res) {
                               if (err) throw err;
                               console.log(result);
                               db.close();
-                              if (result)
+                              if (result) {
+                                if (result.RefType === "Diagnostic Result") {
+                                  result.RefType = "diagnosis";
+                                }
+                                if (
+                                  result.RefType === "" &&
+                                  result.diagnosis2 === true
+                                ) {
+                                  result.RefType = "Diagnostic Result";
+                                }
                                 res.send({
                                   status: 200,
                                   message: "success",
                                   data: result,
                                 });
-                              else
+                              } else
                                 res.send({
                                   status: 404,
                                   message: "Data Not Found",
@@ -1788,13 +2008,22 @@ async function getDiagnosis(req, res) {
                               if (err) throw err;
                               console.log(result);
                               db.close();
-                              if (result)
+                              if (result) {
+                                if (result.RefType === "Diagnostic Result") {
+                                  result.RefType = "diagnosis";
+                                }
+                                if (
+                                  result.RefType === "" &&
+                                  result.diagnosis2 === true
+                                ) {
+                                  result.RefType = "Diagnostic Result";
+                                }
                                 res.send({
                                   status: 200,
                                   message: "success",
                                   data: result,
                                 });
-                              else
+                              } else
                                 res.send({
                                   status: 404,
                                   message: "Data Not Found",
@@ -1964,13 +2193,22 @@ async function getDiagnosis(req, res) {
                               if (err) throw err;
                               console.log(result);
                               db.close();
-                              if (result)
+                              if (result) {
+                                if (result.RefType === "Diagnostic Result") {
+                                  result.RefType = "diagnosis";
+                                }
+                                if (
+                                  result.RefType === "" &&
+                                  result.diagnosis2 === true
+                                ) {
+                                  result.RefType = "Diagnostic Result";
+                                }
                                 res.send({
                                   status: 200,
                                   message: "success",
                                   data: result,
                                 });
-                              else
+                              } else
                                 res.send({
                                   status: 404,
                                   message: "Data Not Found",
@@ -1995,13 +2233,22 @@ async function getDiagnosis(req, res) {
                               if (err) throw err;
                               console.log(result);
                               db.close();
-                              if (result)
+                              if (result) {
+                                if (result.RefType === "Diagnostic Result") {
+                                  result.RefType = "diagnosis";
+                                }
+                                if (
+                                  result.RefType === "" &&
+                                  result.diagnosis2 === true
+                                ) {
+                                  result.RefType = "Diagnostic Result";
+                                }
                                 res.send({
                                   status: 200,
                                   message: "success",
                                   data: result,
                                 });
-                              else
+                              } else
                                 res.send({
                                   status: 404,
                                   message: "Data Not Found",
@@ -2054,13 +2301,19 @@ async function getDiagnosis(req, res) {
                     if (err) throw err;
                     console.log(result);
                     db.close();
-                    if (result)
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
                       res.send({
                         status: 200,
                         message: "success",
                         data: result,
                       });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   });
               });
               return;
@@ -2079,13 +2332,19 @@ async function getDiagnosis(req, res) {
                     if (err) throw err;
                     console.log(result);
                     db.close();
-                    if (result)
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
                       res.send({
                         status: 200,
                         message: "success",
                         data: result,
                       });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   });
               });
               return;
@@ -2223,8 +2482,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result) res.send({ ...result, count });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: { ...result, count },
+                      });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   }
                 );
             });
@@ -2295,8 +2565,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result) res.send({ ...result, count });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: { ...result, count },
+                      });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   }
                 );
             });
@@ -2338,8 +2619,23 @@ async function getDiagnosis(req, res) {
                       console.log(result);
                       db.close();
                       console.log(answers.length);
-                      if (result) res.send({ ...result, count });
-                      else res.send({ status: 404, message: "Data Not Found" });
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
+                        res.send({
+                          status: 200,
+                          message: "success",
+                          data: { ...result, count },
+                        });
+                      } else
+                        res.send({ status: 404, message: "Data Not Found" });
                     }
                   );
               });
@@ -2388,8 +2684,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result) res.send({ ...result, count });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: { ...result, count },
+                      });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   }
                 );
             });
@@ -2467,8 +2774,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result) res.send({ ...result, count });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: { ...result, result },
+                      });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   }
                 );
             });
@@ -2533,13 +2851,19 @@ async function getDiagnosis(req, res) {
                     console.log(result);
                     db.close();
                     console.log(answers.length);
-                    if (result)
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
                       res.send({
                         status: 200,
                         message: "success",
                         data: result,
                       });
-                    else res.send({ status: 404, message: "Data Not Found" });
+                    } else res.send({ status: 404, message: "Data Not Found" });
                   }
                 );
             });
@@ -2560,9 +2884,15 @@ async function getDiagnosis(req, res) {
                 if (err) throw err;
                 console.log(result);
                 db.close();
-                if (result)
+                if (result) {
+                  if (result.RefType === "Diagnostic Result") {
+                    result.RefType = "diagnosis";
+                  }
+                  if (result.RefType === "" && result.diagnosis2 === true) {
+                    result.RefType = "Diagnostic Result";
+                  }
                   res.send({ status: 200, message: "success", data: result });
-                else res.send({ status: 404, message: "Data Not Found" });
+                } else res.send({ status: 404, message: "Data Not Found" });
               });
           });
         } catch (error) {
