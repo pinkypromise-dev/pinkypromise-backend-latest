@@ -17,15 +17,20 @@ async function getQuestion(req,res){
                 SortQuery: {TID: 1}
             }
             var Response = await Database.GetAccess(QueryDataSet);
+            // console.log(Response);
             if(Response.length > 0){
                 let ResponseData = Response[0];
                 for(let s=0;s<ResponseData.Options.length;s++){
-                    ResponseData.Options[s].RefType = "";
+                    if(QID === 4 && TID === 1){
+                        ResponseData.Options[s].RefType = "Diagnostic Result";
+                    }else{
+                        ResponseData.Options[s].RefType = "";
+                    }
                 }
                 if(QID === 18){
                     let SelectedOptions= req.SelectedOptions;
                     let CondQue = SelectedOptions.filter((Data,Index)=>{
-                        return(Data.QID === 17)
+                        return(parseInt(Data.QID) === 17)
                     })
                     if(ResponseData.Options[0].ID === 1 && CondQue[0].ID === 1){
                         ResponseData.Options[0].NextRef = 9;
@@ -45,7 +50,7 @@ async function getQuestion(req,res){
                             ResponseData.Options[1].NextRef = -1;
                         }
                     }
-                }else if(QID === 26 && TID === 4){ // UTI
+                }else if((QID === 26 || QID === 24) && TID === 4){ // UTI
                     let UTI=false;
                     let PossibleUTI=false;
                     let RecurrentUTI=false;
@@ -54,25 +59,27 @@ async function getQuestion(req,res){
                     let SelectedOptions= req.SelectedOptions;
                     // Condition 1
                     let CondQue = SelectedOptions.filter((Data,Index)=>{
-                        return(Data.QID === 22)
+                        return(parseInt(Data.QID) == 22)
                     })
                     if(CondQue.length > 0){
                         let CondOpt = CondQue[0].data.filter((Data,Index)=>{
-                            return(Data.ID === 5)
+                            return(parseInt(Data.ID) === 5)
                         })
                         if(CondOpt.length > 0){
                             UTI = false;
                         }else{
                             UTI = true;
                         }
+                        // console.log("Condition 1 => UTI: "+UTI)
                         // Condition 2, 3, 4 and 6
-                        if(UTI){
+                        if(UTI === false){
+                            // console.log("In UTI False")
                             let CondQue1 = SelectedOptions.filter((Data,Index)=>{
-                                return(Data.QID === 23)
+                                return(parseInt(Data.QID) === 23)
                             })
                             if(CondQue1.length > 0){
                                 let CondOpt1 = CondQue1[0].data.filter((Data,Index)=>{
-                                    return(Data.ID === 4)
+                                    return(parseInt(Data.ID) === 4)
                                 })
                                 // Condition 2
                                 if(CondOpt1.length > 0){
@@ -80,78 +87,91 @@ async function getQuestion(req,res){
                                 }else{
                                     PossibleUTI = true;
                                 }
+                                // console.log("Condition 2 => PossibleUTI: "+PossibleUTI)
                                 // Condition 3
                                 let CondOpt2 = CondQue1[0].data.filter((Data,Index)=>{
-                                    return(Data.ID === 1 || Data.ID === 2 || Data.ID === 3)
+                                    return(parseInt(Data.ID) === 1 || parseInt(Data.ID) === 2)
                                 })
                                 if(CondOpt2.length > 1){
-                                    let CondOpt3 = CondOpt2.filter((Data,Index)=>{
-                                        return(Data.ID === 3)
+                                    let CondOpt3 = CondQue1[0].data.filter((Data,Index)=>{
+                                        return(parseInt(Data.ID) === 3)
                                     }) 
                                     if(CondOpt3.length > 0){
                                         UTI = true
                                     }
                                 }
+                                // console.log("Condition 3 => UTI: "+UTI)
                                 // Condition 4
-                                let CondOpt41 = CondOpt2.filter((Data,Index)=>{
-                                    return(Data.ID === 1 || Data.ID === 2)
+                                let CondOpt41 = CondQue1[0].data.filter((Data,Index)=>{
+                                    return(parseInt(Data.ID) === 1)
                                 })
-                                let CondOpt42 = CondOpt2.filter((Data,Index)=>{
-                                    return(Data.ID === 1 || Data.ID === 3)
+                                let CondOpt42 = CondQue1[0].data.filter((Data,Index)=>{
+                                    return(parseInt(Data.ID) === 2)
                                 })
-                                let CondOpt43 = CondOpt2.filter((Data,Index)=>{
-                                    return(Data.ID === 2 || Data.ID === 3)
+                                let CondOpt43 = CondQue1[0].data.filter((Data,Index)=>{
+                                    return(parseInt(Data.ID) === 3)
                                 })
-                                if(CondOpt41.length === 2 || CondOpt42.length === 2 || CondOpt43.length === 2){
+                                if((CondOpt41.length === 1 && CondOpt42.length === 1) || (CondOpt41.length === 1 && CondOpt43.length === 1) && (CondOpt42.length === 1 && CondOpt43.length === 1)){
                                     PossibleUTI = true;
                                 }
+                                // console.log("Condition 4 => PossibleUTI: "+PossibleUTI)
                                 // Condition 6
                                 if(CondOpt1.length === 1)   {
                                     NoUTI = true;
                                 }
+                                // console.log("Condition 6 => NoUTI: "+NoUTI)
                             }else{
                                 // return({status:404, message:"Data Not Found"});
                             }
                         }
                         // Condition-5
                         let CondQue5 = SelectedOptions.filter((Data,Index)=>{
-                            return(Data.QID === 25)
+                            return(parseInt(Data.QID) === 25)
                         })
+
                         if(CondQue5.length > 0){
-                            if(CondQue5[0].ID === 2){
-                                if(ResponseData.Options[0].ID === 1){ //Q26 => yes
-                                    RecurrentUTI = true;
-                                    if(UTI == true && RecurrentUTI == true){
-                                        ResponseData.Options[0].NextRef=20; //UTI + RecurrentUTI
-                                    }else if(PossibleUTI == true && RecurrentUTI == true){
-                                        ResponseData.Options[0].NextRef=19; //PossibleUTI + RecurrentUTI
-                                    }else{
+                            if(parseInt(ResponseData.Options[0].ID) === 1 || parseInt(CondQue5[0].ID) === 1){ //Q26 => yes
+                                RecurrentUTI = true;
+                                // console.log("Selects: Yes")
+                                if(UTI == true && RecurrentUTI == true){
+                                    // console.log("UTI + RecurrentUTI: "+(UTI == true && RecurrentUTI == true))
+                                    ResponseData.Options[0].NextRef=20; //UTI + RecurrentUTI
+                                }else if(PossibleUTI == true && RecurrentUTI == true){
+                                    // console.log("PossibleUTI + RecurrentUTI: "+(PossibleUTI == true && RecurrentUTI == true))
+                                    ResponseData.Options[0].NextRef=19; //PossibleUTI + RecurrentUTI
+                                }else{
+                                    if(UTI){
                                         ResponseData.Options[0].NextRef=18;
+                                    }else if(PossibleUTI){
+                                        ResponseData.Options[0].NextRef=17;
+                                    }else if(NoUTI){
+                                        ResponseData.Options[0].NextRef=16;
                                     }
                                 }
-                            }else{
-                                ResponseData.Options[0].NextRef=18; //this is missed
+                            }
+                            // console.log("Selects: No")
+                            if(UTI){
+                                ResponseData.Options[1].NextRef=18;
+                            }else if(PossibleUTI){
+                                ResponseData.Options[1].NextRef=17;
+                            }else if(NoUTI){
+                                ResponseData.Options[1].NextRef=16;
                             }
                         }else{
+                            // console.log("FINAL ELSE")
                             if(UTI){
-                                ResponseData.Options[0].NextRef=18;
+                                ResponseData.Options[1].NextRef=18;
                             }else if(PossibleUTI){
-                                ResponseData.Options[0].NextRef=17;
+                                ResponseData.Options[1].NextRef=17;
                             }else if(NoUTI){
-                                ResponseData.Options[0].NextRef=16
+                                ResponseData.Options[1].NextRef=16;
                             }
                         }
-                        if(UTI){
-                            ResponseData.Options[1].NextRef=18;
-                        }else if(PossibleUTI){
-                            ResponseData.Options[1].NextRef=17;
-                        }else if(NoUTI){
-                            ResponseData.Options[1].NextRef=16;
-                        }
                     }else{
-                        return({status:404, message:"Data Not Found"});
+                        return({status:404, message:"Please Select Options..."});
                     }
                 }
+                // console.log("************************************************")
                 return({status:200, message:"success",data: ResponseData});
             }else{
                 return({status:404, message:"Data Not Found"});
