@@ -49,6 +49,28 @@ async function getQuestion(req, res) {
           res.send({ status: 400, message: error.message });
         }
       }
+      else {
+        try {
+          MongoClient.connect(url, function (err, db) {
+            if (err) throw err;
+            const dbo = db.db("ChatBoat");
+            dbo
+              .collection("questions")
+              .findOne({ QID, TID }, function (err, result) {
+                if (err) throw err;
+                console.log(result);
+                db.close();
+                return res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              });
+          });
+        } catch (error) {
+          res.send({ status: 400, message: error.message });
+        }
+      }
       return;
     } else {
       try {
