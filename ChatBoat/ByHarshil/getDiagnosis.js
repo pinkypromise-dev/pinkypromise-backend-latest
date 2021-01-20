@@ -127,6 +127,7 @@ async function getDiagnosis(req, res) {
       }
     }
     if (TID == 5) {
+      console.log(SelectedOptions)
       const answers = SelectedOptions.map((answer) => answer.ID);
       let selectedDiagnosis;
       console.log(answers.length);
@@ -257,8 +258,21 @@ async function getDiagnosis(req, res) {
           copyAnswers[3] == 2 &&
           copyAnswers[4] == 1 &&
           !selectedDiagnosis
-        )
-          selectedDiagnosis = 15;
+        ) {
+          if (answers[5] == 1 &&
+            answers[6] == 1 &&
+            answers[7] == 1) {
+            selectedDiagnosis = 23;
+          }
+          if (answers[5] == 2 &&
+            answers[6] == 1 &&
+            answers[7] == 1)
+            selectedDiagnosis = 24;
+
+          else
+            selectedDiagnosis = 15;
+
+        }
       } else {
         console.log("else");
         const { RefType } = req.body;
@@ -280,7 +294,7 @@ async function getDiagnosis(req, res) {
                     if (result.RefType === "" && result.diagnosis2 === true) {
                       result.RefType = "Diagnostic Result";
                     }
-                    res.send({ status: 200, message: "success", data: result });
+                    res.send({ status: 200, message: "success", data: [result] });
                   } else res.send({ status: 404, message: "Data Not Found" });
                 });
             });
@@ -373,7 +387,7 @@ async function getDiagnosis(req, res) {
       console.log(SelectedOptions.length);
       if (SelectedOptions && SelectedOptions.length > 1) {
         console.log("inside");
-        if (SelectedOptions[0].QID == 3 && SelectedOptions[0].ID == 1) {
+        if (SelectedOptions[1].QID == 3 && SelectedOptions[1].ID == 1) {
           let yeast = 0,
             chlamydia = 0,
             gonorrhea = 0,
@@ -383,44 +397,40 @@ async function getDiagnosis(req, res) {
             diagnosis = true;
           const answers = SelectedOptions.map((answer) => answer.ID);
           console.log(SelectedOptions.length);
-          if (SelectedOptions.length == 19) {
-            if (answers[1] == 1) {
-              chlamydia += 1;
-              trichmoniasis += 1;
-            }
+          if (SelectedOptions.length == 20) {
             if (answers[2] == 1) {
-              chlamydia += 20;
-            }
-
-            if (answers[3] == 1) {
               chlamydia += 1;
-              gonorrhea += 1;
               trichmoniasis += 1;
+            }
+            if (answers[3] == 1) {
+              chlamydia += 20;
             }
 
             if (answers[4] == 1) {
               chlamydia += 1;
+              gonorrhea += 1;
               trichmoniasis += 1;
             }
 
             if (answers[5] == 1) {
+              chlamydia += 1;
+              trichmoniasis += 1;
+            }
+
+            if (answers[6] == 1) {
               yeast += 1;
               chlamydia += 1;
               trichmoniasis += 1;
             }
 
-            if (answers[7] == 1) {
+            if (answers[8] == 1) {
               yeast += 1;
               chlamydia += 1;
               gonorrhea += 1;
             }
 
-            if (answers[8] == 1) {
-              gonorrhea += 20;
-            }
-
             if (answers[9] == 1) {
-              trichmoniasis += 1;
+              gonorrhea += 20;
             }
 
             if (answers[10] == 1) {
@@ -428,12 +438,11 @@ async function getDiagnosis(req, res) {
             }
 
             if (answers[11] == 1) {
-              yeast += 20;
+              trichmoniasis += 1;
             }
 
             if (answers[12] == 1) {
-              yeast += 1;
-              trichmoniasis += 1;
+              yeast += 20;
             }
 
             if (answers[13] == 1) {
@@ -442,7 +451,8 @@ async function getDiagnosis(req, res) {
             }
 
             if (answers[14] == 1) {
-              chlamydia += 20;
+              yeast += 1;
+              trichmoniasis += 1;
             }
 
             if (answers[15] == 1) {
@@ -450,26 +460,30 @@ async function getDiagnosis(req, res) {
             }
 
             if (answers[16] == 1) {
+              chlamydia += 20;
+            }
+
+            if (answers[17] == 1) {
               chlamydia += 1;
               gonorrhea += 1;
               trichmoniasis += 1;
             }
 
-            if (answers[18] == 1) {
+            if (answers[19] == 1) {
               chlamydia += 20;
             }
 
             console.log("+++++++", chlamydia, trichmoniasis);
 
             //Yeast
-            if (answers[11] == 1 && (answers[12] == 1 || answers[13] == 1)) {
+            if (answers[12] == 1 && (answers[13] == 1 || answers[14] == 1)) {
               selectedDiagnosis = 1;
             }
 
             //Yeast
             else if (
-              answers[12] == 1 &&
               answers[13] == 1 &&
+              answers[14] == 1 &&
               yeast > trichmoniasis
             ) {
               selectedDiagnosis = 1;
@@ -570,43 +584,38 @@ async function getDiagnosis(req, res) {
             return;
           }
 
-          if (SelectedOptions.length == 16) {
-            if (answers[1] == 1) {
+          if (SelectedOptions.length == 17) {
+            if (answers[2] == 1) {
               chlamydia += 1;
               trichmoniasis += 1;
             }
-            if (answers[2] == 1) {
+            if (answers[3] == 1) {
               chlamydia += 20;
             }
 
-            if (answers[3] == 1) {
+            if (answers[4] == 1) {
               chlamydia += 1;
               gonorrhea += 1;
               trichmoniasis += 1;
             }
 
-            if (answers[4] == 1) {
+            if (answers[5] == 1) {
               chlamydia += 1;
               trichmoniasis += 1;
             }
 
-            if (answers[5] == 1) {
+            if (answers[6] == 1) {
               yeast += 1;
               chlamydia += 1;
-              trichmoniasis += 1;
-            }
-
-            if (answers[7] == 1) {
               trichmoniasis += 1;
             }
 
             if (answers[8] == 1) {
-              yeast += 20;
+              trichmoniasis += 1;
             }
 
             if (answers[9] == 1) {
-              yeast += 1;
-              trichmoniasis += 1;
+              yeast += 20;
             }
 
             if (answers[10] == 1) {
@@ -615,7 +624,8 @@ async function getDiagnosis(req, res) {
             }
 
             if (answers[11] == 1) {
-              chlamydia += 20;
+              yeast += 1;
+              trichmoniasis += 1;
             }
 
             if (answers[12] == 1) {
@@ -623,19 +633,23 @@ async function getDiagnosis(req, res) {
             }
 
             if (answers[13] == 1) {
+              chlamydia += 20;
+            }
+
+            if (answers[14] == 1) {
               chlamydia += 1;
               gonorrhea += 1;
               trichmoniasis += 1;
             }
 
-            if (answers[15] == 1) {
+            if (answers[16] == 1) {
               chlamydia += 20;
             }
 
             //Yeast here
             if (
-              answers[8] == 1 &&
-              (answers[9] == 1 || answers[10] == 1) &&
+              answers[9] == 1 &&
+              (answers[10] == 1 || answers[11] == 1) &&
               yeast > trichmoniasis
             ) {
               selectedDiagnosis = 1;
@@ -643,8 +657,8 @@ async function getDiagnosis(req, res) {
 
             //Yeast here
             else if (
-              answers[9] == 1 &&
               answers[10] == 1 &&
+              answers[11] == 1 &&
               yeast > trichmoniasis
             ) {
               selectedDiagnosis = 1;
@@ -747,7 +761,7 @@ async function getDiagnosis(req, res) {
           }
         }
 
-        if (SelectedOptions[0].QID == 3 && SelectedOptions[0].ID == 2) {
+        if (SelectedOptions[1].QID == 3 && SelectedOptions[1].ID == 2) {
           let herpes = 0,
             syphilis = 0,
             genitalWart = 0;
@@ -757,7 +771,7 @@ async function getDiagnosis(req, res) {
           const answers = SelectedOptions.map((elem) => elem.ID);
 
           //Required question for syphilis and herpes is 22, if answer is no check for genital warts
-          if (SelectedOptions[1].QID == 22 && SelectedOptions[1].ID == 2) {
+          if (SelectedOptions[2].QID == 22 && SelectedOptions[2].ID == 2) {
             SelectedOptions.map((elem) => {
               //Genital Wart
               if (elem.QID == 32) {
@@ -768,12 +782,12 @@ async function getDiagnosis(req, res) {
             });
           }
 
-          if (SelectedOptions[1].QID == 22 && SelectedOptions[1].ID == 1) {
+          if (SelectedOptions[2].QID == 22 && SelectedOptions[2].ID == 1) {
             //all needed questions for syphilis answered with yes and atleast 1 needed for herpes answered no
             if (
-              answers[2] == 1 &&
               answers[3] == 1 &&
-              (answers[4] !== 1 || answers[5] !== 1)
+              answers[4] == 1 &&
+              (answers[5] !== 1 || answers[5] !== 1)
             ) {
               selectedDiagnosis = 6;
               diagnosis = true;
@@ -781,19 +795,19 @@ async function getDiagnosis(req, res) {
 
             //all needed questions for herpes answered with yes and atleast 1 needed for syphilis answered no
             if (
-              answers[4] == 1 &&
               answers[5] == 1 &&
-              (answers[2] !== 1 || answers[3] !== 1)
+              answers[6] == 1 &&
+              (answers[3] !== 1 || answers[4] !== 1)
             ) {
               selectedDiagnosis = 5;
               diagnosis = true;
             }
 
             if (
-              answers[4] == 1 &&
               answers[5] == 1 &&
-              answers[2] == 1 &&
-              answers[3] == 1
+              answers[6] == 1 &&
+              answers[3] == 1 &&
+              answers[4] == 1
             ) {
               SelectedOptions.map((elem) => {
                 if (elem.QID == 27 && elem.ID == 1) herpes += 1;
@@ -890,7 +904,7 @@ async function getDiagnosis(req, res) {
           return;
         }
 
-        if (SelectedOptions[0].QID == 3 && SelectedOptions[0].ID == 3) {
+        if (SelectedOptions[1].QID == 3 && SelectedOptions[1].ID == 3) {
           let syphilis = 0,
             scabies = 0;
           const answers = SelectedOptions.map((answer) => answer.ID);
@@ -900,41 +914,41 @@ async function getDiagnosis(req, res) {
 
           //SYPHILIS
           if (
-            SelectedOptions[1].QID == 42 &&
-            SelectedOptions[1].ID == 1 &&
-            SelectedOptions[2].QID == 43 &&
+            SelectedOptions[2].QID == 42 &&
             SelectedOptions[2].ID == 1 &&
-            SelectedOptions[3].QID == 44 &&
+            SelectedOptions[3].QID == 43 &&
             SelectedOptions[3].ID == 1 &&
-            ((SelectedOptions[4].QID == 45 && SelectedOptions[4].ID !== 1) ||
-              (SelectedOptions[7].QID == 48 && SelectedOptions[7].ID !== 1))
+            SelectedOptions[4].QID == 44 &&
+            SelectedOptions[4].ID == 1 &&
+            ((SelectedOptions[5].QID == 45 && SelectedOptions[5].ID !== 1) ||
+              (SelectedOptions[8].QID == 48 && SelectedOptions[8].ID !== 1))
           ) {
             selectedDiagnosis = 6;
           }
 
           if (
-            SelectedOptions[4].QID == 45 &&
-            SelectedOptions[4].ID == 1 &&
-            SelectedOptions[7].QID == 48 &&
-            SelectedOptions[7].ID == 1 &&
-            ((SelectedOptions[1].QID == 42 && SelectedOptions[1].ID !== 1) ||
-              (SelectedOptions[2].QID == 43 && SelectedOptions[2].ID !== 1) ||
-              (SelectedOptions[3].QID == 44 && SelectedOptions[3].ID !== 1))
+            SelectedOptions[5].QID == 45 &&
+            SelectedOptions[5].ID == 1 &&
+            SelectedOptions[8].QID == 48 &&
+            SelectedOptions[8].ID == 1 &&
+            ((SelectedOptions[2].QID == 42 && SelectedOptions[2].ID !== 1) ||
+              (SelectedOptions[3].QID == 43 && SelectedOptions[3].ID !== 1) ||
+              (SelectedOptions[4].QID == 44 && SelectedOptions[4].ID !== 1))
           ) {
             selectedDiagnosis = 9;
           }
 
           if (
-            SelectedOptions[1].QID == 42 &&
-            SelectedOptions[1].ID == 1 &&
-            SelectedOptions[2].QID == 43 &&
+            SelectedOptions[2].QID == 42 &&
             SelectedOptions[2].ID == 1 &&
-            SelectedOptions[3].QID == 44 &&
+            SelectedOptions[3].QID == 43 &&
             SelectedOptions[3].ID == 1 &&
-            SelectedOptions[4].QID == 45 &&
+            SelectedOptions[4].QID == 44 &&
             SelectedOptions[4].ID == 1 &&
-            SelectedOptions[7].QID == 48 &&
-            SelectedOptions[7].ID == 1
+            SelectedOptions[5].QID == 45 &&
+            SelectedOptions[5].ID == 1 &&
+            SelectedOptions[8].QID == 48 &&
+            SelectedOptions[8].ID == 1
           ) {
             SelectedOptions.map((elem) => {
               if (elem.QID == 42 && elem.ID == 1) syphilis += 1;
@@ -1033,7 +1047,7 @@ async function getDiagnosis(req, res) {
           return;
         }
 
-        if (SelectedOptions[0].QID == 3 && SelectedOptions[0].ID == 4) {
+        if (SelectedOptions[1].QID == 3 && SelectedOptions[1].ID == 4) {
           let yeast = 0,
             trichmoniasis = 0,
             herpes = 0,
@@ -1045,41 +1059,44 @@ async function getDiagnosis(req, res) {
           const answers = SelectedOptions.map((answer) => answer.ID);
 
           if (
-            (SelectedOptions[10].QID == 68 &&
-              SelectedOptions[10].ID == 1 &&
-              SelectedOptions[11].QID == 69 &&
-              SelectedOptions[11].ID == 1) ||
-            (SelectedOptions[10].QID == 68 &&
-              SelectedOptions[10].ID == 1 &&
-              SelectedOptions[12].QID == 70 &&
-              SelectedOptions[12].ID == 1) ||
-            (SelectedOptions[11].QID == 69 &&
+            (SelectedOptions[11].QID == 68 &&
               SelectedOptions[11].ID == 1 &&
-              SelectedOptions[12].QID == 70 &&
-              SelectedOptions[12].ID == 1)
+              SelectedOptions[12].QID == 69 &&
+              SelectedOptions[12].ID == 1) ||
+            (SelectedOptions[11].QID == 68 &&
+              SelectedOptions[11].ID == 1 &&
+              SelectedOptions[13].QID == 70 &&
+              SelectedOptions[13].ID == 1) ||
+            (SelectedOptions[12].QID == 69 &&
+              SelectedOptions[12].ID == 1 &&
+              SelectedOptions[13].QID == 70 &&
+              SelectedOptions[13].ID == 1)
           ) {
             selectedDiagnosis = 1;
           } else if (
-            SelectedOptions[14].QID == 72 &&
-            SelectedOptions[14].ID == 1 &&
-            SelectedOptions[15].QID == 73 &&
+            SelectedOptions.length > 16 &&
+            SelectedOptions[15].QID == 72 &&
             SelectedOptions[15].ID == 1 &&
-            SelectedOptions[16].QID == 74 &&
-            SelectedOptions[16].ID == 1
+            SelectedOptions[16].QID == 73 &&
+            SelectedOptions[16].ID == 1 &&
+            SelectedOptions[17].QID == 74 &&
+            SelectedOptions[17].ID == 1
           ) {
             selectedDiagnosis = 5;
           } else if (
-            SelectedOptions[22].QID == 80 &&
-            SelectedOptions[22].ID == 1 &&
-            SelectedOptions[23].QID == 81 &&
-            SelectedOptions[23].ID == 1
+            SelectedOptions.length > 23 &&
+            SelectedOptions[23].QID == 80 &&
+            SelectedOptions[23].ID == 1 &&
+            SelectedOptions[24].QID == 81 &&
+            SelectedOptions[24].ID == 1
           ) {
             selectedDiagnosis = 9;
           } else if (
-            SelectedOptions[27].QID == 85 &&
-            SelectedOptions[27].ID == 1 &&
-            SelectedOptions[29].QID == 87 &&
-            SelectedOptions[29].ID == 1
+            SelectedOptions.length > 29 &&
+            SelectedOptions[28].QID == 85 &&
+            SelectedOptions[28].ID == 1 &&
+            SelectedOptions[30].QID == 87 &&
+            SelectedOptions[30].ID == 1
           ) {
             selectedDiagnosis = 8;
           }
@@ -1225,7 +1242,7 @@ async function getDiagnosis(req, res) {
                         res.send({
                           status: 200,
                           message: "success",
-                          data: result,
+                          data: [result],
                         });
                       } else
                         res.send({ status: 404, message: "Data Not Found" });
@@ -1317,7 +1334,7 @@ async function getDiagnosis(req, res) {
                   if (result.RefType === "" && result.diagnosis2 === true) {
                     result.RefType = "Diagnostic Result";
                   }
-                  res.send({ status: 200, message: "success", data: result });
+                  res.send({ status: 200, message: "success", data: [result] });
                 } else res.send({ status: 404, message: "Data Not Found" });
                 return;
               });
