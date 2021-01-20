@@ -9,7 +9,7 @@ async function getQuestion(req, res) {
     QID = parseInt(QID)
     TID = parseInt(TID)
     console.log(QID, typeof QID, TID, typeof TID, QID == "1", TID == "3");
-    if (TID== 3 && SelectedOptions && SelectedOptions.length > 1) {
+    if (TID== 3 && SelectedOptions && SelectedOptions.length == 2) {
       console.log(SelectedOptions[0].QID == 18, SelectedOptions[0].QID == 19);
       let selectedQId;
       if (SelectedOptions[0].QID == 18 && SelectedOptions[1].QID == 19) {
