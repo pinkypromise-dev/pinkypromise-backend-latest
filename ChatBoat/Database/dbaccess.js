@@ -29,6 +29,12 @@ async function GetDbAccess(req){
 }
 exports.GetDbAccess=GetDbAccess;
 
+async function GetPinkyPromiseAccess(req){
+    let response = await Mongo.db('PinkyPromise').collection(req.collection).findOne(req.query);
+    return (response)
+}
+exports.GetPinkyPromiseAccess = GetPinkyPromiseAccess;
+
 async function GetAccess(req){
     try{
         if(req.Sort === false){

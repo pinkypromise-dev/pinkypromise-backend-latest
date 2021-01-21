@@ -1,5 +1,6 @@
 // var MongoClient = require("mongodb").MongoClient;
 var Database = require("../Database/dbaccess");
+var ObjectId = require("mongodb").ObjectID;
 async function getDiagnosis(req, res) {
   try {
     console.log(req.body);
@@ -7,18 +8,52 @@ async function getDiagnosis(req, res) {
     // let result = await Database.GetDbAccess({"collection":"diagnosis", query: { MsgId: 1, TID:3 }});
     // console.log(result)
     // res.send(result);
+    const calcAge = (dob) => {
+      var dob = new Date(dob);
+      //calculate month difference from current date in time
+      var month_diff = Date.now() - dob.getTime();
 
+      //convert the calculated difference in date format
+      var age_dt = new Date(month_diff);
+
+      //extract year from date
+      var year = age_dt.getUTCFullYear();
+
+      //now calculate the age of the user
+      var age = Math.abs(year - 1970);
+
+      return age;
+    };
+
+    const user = await Database.GetPinkyPromiseAccess({
+      collection: "userdetails",
+      query: { _id: new ObjectId(req.body.user) },
+    });
+
+    const weight = user.weight;
+    let wt, ht;
+    if (weight.unit !== "Kg") {
+      wt = weight.measure / 2.205;
+    } else wt = weight.measure;
+
+    const height = user.height;
+    ht = height.measure / 39.37;
+
+    let bmi = wt / (ht * ht);
     // res.send({status:200,message:"success"});
     let { MsgId, TID, SelectedOptions } = req.body;
     MsgId = parseInt(MsgId);
     TID = parseInt(TID);
-    let age = 30;
+    let age = calcAge(user.dob);
+    console.log("USER", age);
     // console.log(SelectedOptions);
     if (TID == 3) {
       if (SelectedOptions.length == 10) {
         const answers = SelectedOptions.map((elem) => elem.ID);
         const filteredAnswers = answers.filter((answer) => answer == 1);
         let selectedDiagnosis;
+        if(filteredAnswers.length == 0)
+        selectedDiagnosis = 41;
         // console.log(selectedDiagnosis);
         if (age > 35) {
           const checkNone = answers.find((elem) => elem == 1);
@@ -64,6 +99,240 @@ async function getDiagnosis(req, res) {
             selectedDiagnosis = 26;
           } else {
             selectedDiagnosis = 22;
+          }
+          if (answers[7] == 1 || answers[8] == 1 || answers[9] == 1) {
+            selectedDiagnosis = 28;
+          }
+        }
+        // console.log(selectedDiagnosis, TID);
+        try {
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          // const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({
+            collection: "diagnosis",
+            query: { MsgId: selectedDiagnosis, TID },
+          });
+          // console.log(result)
+          // db.db("ChatBoat").collection("diagnosis").findOne({ MsgId: selectedDiagnosis, TID },function (err, result) {
+          //       if (err) throw err;
+          // console.log(result);
+          // db.close();
+          result = {
+            ...result,
+            count: `You answered yes to ${filteredAnswers.length} factors that are commonly associated with infertility.`,
+          };
+          if (result) {
+            if (result.RefType === "Diagnostic Result") {
+              result.RefType = "diagnosis";
+            }
+            if (result.RefType === "" && result.diagnosis2 === true) {
+              result.RefType = "Diagnostic Result";
+            }
+            res.send({ status: 200, message: "success", data: result });
+          } else res.send({ status: 404, message: "Data Not Found" });
+          //   }
+          // );
+          // });
+        } catch (error) {
+          res.send({ status: 400, message: error.message });
+        }
+        return;
+      } else if (SelectedOptions.length == 9 && SelectedOptions[1].QID == 3) {
+        const answers = SelectedOptions.map((elem) => elem.ID);
+        const filteredAnswers = answers.filter((answer) => answer == 1);
+        let selectedDiagnosis;
+        // console.log(selectedDiagnosis);
+        if (age > 35) {
+          const checkNone = answers.find((elem) => elem == 1);
+          if (answers[1] == 1 || answers[4] == 1 || answers[5] == 1) {
+            selectedDiagnosis = 25;
+          }
+          if (
+            answers[0] == 1 &&
+            (answers[1] == 1 ||
+              answers[2] == 1 ||
+              answers[3] == 1 ||
+              answers[5] == 1)
+          ) {
+            selectedDiagnosis = 27;
+          }
+          if (answers[6] == 1 || answers[7] == 1 || answers[8] == 1) {
+            selectedDiagnosis = 28;
+          }
+        }
+        if (age < 35) {
+          // const checkNone = answers.find((elem) => elem == 1);
+          // console.log(answers[4] == 1, answers[5] == 1);
+          if (answers[1] == 1 || answers[4] == 1 || answers[5] == 1) {
+            selectedDiagnosis = 24;
+          } else if (
+            answers[0] == 1 &&
+            (answers[1] == 1 ||
+              answers[2] == 1 ||
+              answers[3] == 1 ||
+              answers[5] == 1)
+          ) {
+            selectedDiagnosis = 26;
+          } else {
+            selectedDiagnosis = 22;
+          }
+          if (answers[6] == 1 || answers[7] == 1 || answers[8] == 1) {
+            selectedDiagnosis = 28;
+          }
+        }
+        // console.log(selectedDiagnosis, TID);
+        try {
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          // const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({
+            collection: "diagnosis",
+            query: { MsgId: selectedDiagnosis, TID },
+          });
+          // console.log(result)
+          // db.db("ChatBoat").collection("diagnosis").findOne({ MsgId: selectedDiagnosis, TID },function (err, result) {
+          //       if (err) throw err;
+          // console.log(result);
+          // db.close();
+          result = {
+            ...result,
+            count: `You answered yes to ${filteredAnswers.length} factors that are commonly associated with infertility.`,
+          };
+          if (result) {
+            if (result.RefType === "Diagnostic Result") {
+              result.RefType = "diagnosis";
+            }
+            if (result.RefType === "" && result.diagnosis2 === true) {
+              result.RefType = "Diagnostic Result";
+            }
+            res.send({ status: 200, message: "success", data: result });
+          } else res.send({ status: 404, message: "Data Not Found" });
+          //   }
+          // );
+          // });
+        } catch (error) {
+          res.send({ status: 400, message: error.message });
+        }
+        return;
+      } else if (SelectedOptions.length == 9 && SelectedOptions[1].QID == 4) {
+        const answers = SelectedOptions.map((elem) => elem.ID);
+        const filteredAnswers = answers.filter((answer) => answer == 1);
+        let selectedDiagnosis;
+        // console.log(selectedDiagnosis);
+        if (age > 35) {
+          const checkNone = answers.find((elem) => elem == 1);
+          if ((answers[1] == 1 && answers[3] == 1) || !checkNone) {
+            selectedDiagnosis = 23;
+          }
+          if (answers[3] == 1 && (answers[4] == 1 || answers[5] == 1)) {
+            selectedDiagnosis = 25;
+          }
+          if (
+            answers[0] == 1 &&
+            (answers[1] == 1 ||
+              answers[2] == 1 ||
+              answers[4] == 1 ||
+              answers[5] == 1)
+          ) {
+            selectedDiagnosis = 27;
+          }
+          if (answers[6] == 1 || answers[7] == 1 || answers[8] == 1) {
+            selectedDiagnosis = 28;
+          }
+        }
+        if (age < 35) {
+          // const checkNone = answers.find((elem) => elem == 1);
+          // console.log(answers[4] == 1, answers[5] == 1);
+          if (answers[3] == 1 && (answers[4] == 1 || answers[5] == 1)) {
+            selectedDiagnosis = 24;
+          } else if (
+            answers[0] == 1 &&
+            (answers[1] == 1 ||
+              answers[2] == 1 ||
+              answers[4] == 1 ||
+              answers[5] == 1)
+          ) {
+            selectedDiagnosis = 26;
+          } else {
+            selectedDiagnosis = 22;
+          }
+          if (answers[6] == 1 || answers[7] == 1 || answers[8] == 1) {
+            selectedDiagnosis = 28;
+          }
+        }
+        // console.log(selectedDiagnosis, TID);
+        try {
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          // const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({
+            collection: "diagnosis",
+            query: { MsgId: selectedDiagnosis, TID },
+          });
+          // console.log(result)
+          // db.db("ChatBoat").collection("diagnosis").findOne({ MsgId: selectedDiagnosis, TID },function (err, result) {
+          //       if (err) throw err;
+          // console.log(result);
+          // db.close();
+          result = {
+            ...result,
+            count: `You answered yes to ${filteredAnswers.length} factors that are commonly associated with infertility.`,
+          };
+          if (result) {
+            if (result.RefType === "Diagnostic Result") {
+              result.RefType = "diagnosis";
+            }
+            if (result.RefType === "" && result.diagnosis2 === true) {
+              result.RefType = "Diagnostic Result";
+            }
+            res.send({ status: 200, message: "success", data: result });
+          } else res.send({ status: 404, message: "Data Not Found" });
+          //   }
+          // );
+          // });
+        } catch (error) {
+          res.send({ status: 400, message: error.message });
+        }
+        return;
+      } else if (SelectedOptions.length == 8) {
+        const answers = SelectedOptions.map((elem) => elem.ID);
+        const filteredAnswers = answers.filter((answer) => answer == 1);
+        let selectedDiagnosis;
+        // console.log(selectedDiagnosis);
+        if (age > 35) {
+          const checkNone = answers.find((elem) => elem == 1);
+          if (answers[3] == 1 || answers[4] == 1) {
+            selectedDiagnosis = 25;
+          }
+          if (
+            answers[0] == 1 &&
+            (answers[2] == 1 ||
+              answers[3] == 1 ||
+              answers[3] == 1 ||
+              answers[4] == 1)
+          ) {
+            selectedDiagnosis = 27;
+          }
+          if (answers[5] == 1 || answers[6] == 1 || answers[7] == 1) {
+            selectedDiagnosis = 28;
+          }
+        }
+        if (age < 35) {
+          // const checkNone = answers.find((elem) => elem == 1);
+          // console.log(answers[4] == 1, answers[5] == 1);
+          if (answers[5] == 1 || answers[6] == 1) {
+            selectedDiagnosis = 24;
+          } else if (
+            answers[0] == 1 &&
+            (answers[2] == 1 || answers[3] == 1 || answers[4] == 1)
+          ) {
+            selectedDiagnosis = 26;
+          } else {
+            selectedDiagnosis = 22;
+          }
+          if (answers[5] == 1 || answers[6] == 1 || answers[7] == 1) {
+            selectedDiagnosis = 28;
           }
         }
         // console.log(selectedDiagnosis, TID);
@@ -1235,6 +1504,7 @@ async function getDiagnosis(req, res) {
                 SelectedOptions[4].ID == 1
               ) {
                 try {
+                  console.log("here");
                   // MongoClient.connect(url, function (err, db) {
                   //   if (err) throw err;
                   //   const dbo = db.db("ChatBoat");
@@ -1261,9 +1531,11 @@ async function getDiagnosis(req, res) {
                       message: "success",
                       data: result,
                     });
+                    return;
                   } else res.send({ status: 404, message: "Data Not Found" });
                   // });
                   // });
+                  return;
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
@@ -1271,9 +1543,10 @@ async function getDiagnosis(req, res) {
               //Of not genetic; or if days > 7 and Y to Genetic
               if (
                 (SelectedOptions[3].QID == 4 && SelectedOptions[3].ID > 7) ||
-                (SelectedOptions[4].QID == 5 && SelectedOptions[4].ID !== 1)
+                (SelectedOptions[4].QID == 5 && SelectedOptions[4].ID == 2)
               ) {
                 //TAKE TO PCOS
+                console.log('1');
                 try {
                   // MongoClient.connect(url, function (err, db) {
                   //   if (err) throw err;
@@ -1282,13 +1555,6 @@ async function getDiagnosis(req, res) {
                     collection: "questions",
                     query: { QID: 6, TID },
                   });
-                  // dbo
-                  //   .collection("questions")
-                  //   .findOne({ QID: 6, TID }, function (err, result) {
-                  //     if (err) throw err;
-                  //     console.log(result);
-                  //     // db.close();
-                  //     console.log(answers.length);
                   if (result) {
                     if (result.RefType === "Diagnostic Result") {
                       result.RefType = "diagnosis";
@@ -1304,6 +1570,7 @@ async function getDiagnosis(req, res) {
                   } else res.send({ status: 404, message: "Data Not Found" });
                   // });
                   // });
+                  return;
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
@@ -1311,7 +1578,7 @@ async function getDiagnosis(req, res) {
             }
 
             //2-4 WEEKS OR MORE THAN 4 WEEKS
-            if (SelectedOptions[2].QID == 2) {
+            if (SelectedOptions[2].QID == 3) {
               let points = 0;
 
               SelectedOptions.map((elem) => {
@@ -1608,8 +1875,6 @@ async function getDiagnosis(req, res) {
               if (age > 36) questionId = 65;
             }
           }
-
-          
         }
 
         if (SelectedOptions[0].QID == 1 && SelectedOptions[0].ID == 2) {
@@ -2186,8 +2451,6 @@ async function getDiagnosis(req, res) {
 
             if (SelectedOptions[1].QID == 94 && SelectedOptions[0].ID == 2) {
               if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 1) {
-                //GET BMI
-                let bmi = 19;
                 let selectedDiagnosis = 37;
                 if (bmi < 18.5) {
                 }
@@ -2199,13 +2462,13 @@ async function getDiagnosis(req, res) {
         if (SelectedOptions[0].QID == 1 && SelectedOptions[0].ID == 3) {
           let points = 0;
           SelectedOptions.map((elem) => {
-            if (elem.QID == 110 && elem.ID == 1) point += 0;
-            if (elem.QID == 110 && elem.ID == 2) point += 1;
-            if (elem.QID == 110 && elem.ID == 3) point += 2;
-            if (elem.QID == 111 && elem.ID == 2) point += 1;
-            if (elem.QID == 112 && elem.ID == 1) point += 1;
-            if (elem.QID == 113 && elem.ID == 1) point += 1;
-            if (elem.QID == 115 && elem.ID == 1) point += 2;
+            if (elem.QID == 110 && elem.ID == 1) points += 0;
+            if (elem.QID == 110 && elem.ID == 2) points += 1;
+            if (elem.QID == 110 && elem.ID == 3) points += 2;
+            if (elem.QID == 111 && elem.ID == 2) points += 1;
+            if (elem.QID == 112 && elem.ID == 1) points += 1;
+            if (elem.QID == 113 && elem.ID == 1) points += 1;
+            if (elem.QID == 115 && elem.ID == 1) points += 2;
           });
 
           if (points == 0) {
@@ -2279,6 +2542,37 @@ async function getDiagnosis(req, res) {
             }
           }
           if (points > 1) {
+            selectedDiagnosis = 116;
+            try {
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({
+                collection: "questions",
+                query: { QID: selectedDiagnosis, TID },
+              });
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
+              if (result) {
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              } else res.send({ status: 404, message: "Data Not Found" });
+              //   }
+              // );
+              // });
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+            }
           }
         }
 
@@ -2755,11 +3049,6 @@ async function getDiagnosis(req, res) {
             if (elem.QID == 21 && elem.ID == 1) stress = true;
           });
 
-          //CALCULATE BMI HERE
-          /*{
-    
-          }*/
-          let bmi = 19;
           if (temp1 || temp11) {
             if (bmi > 24.9) {
               selectedDiagnosis = 10;
@@ -2819,6 +3108,42 @@ async function getDiagnosis(req, res) {
         }
 
         // ----------------------------------------------------------
+      }
+      if (
+        req.body.MsgId !== "-1" &&
+        req.body.MsgId !== "" &&
+        req.body.MsgId !== null &&
+        req.body.MsgId !== undefined
+      ) {
+        try {
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({
+            collection: "diagnosis",
+            query: { MsgId, TID },
+          });
+          // dbo
+          //   .collection("diagnosis2")
+          //   .findOne({ ID: MsgId, TID }, function (err, result) {
+          //     if (err) throw err;
+          //     console.log(result);
+          // db.close();
+          if (result) {
+            if (result.RefType === "Diagnostic Result") {
+              result.RefType = "diagnosis";
+            }
+            if (result.RefType === "" && result.diagnosis2 === true) {
+              result.RefType = "Diagnostic Result";
+            }
+            res.send({ status: 200, message: "success", data: result });
+          } else res.send({ status: 404, message: "Data Not Found" });
+          return;
+          // });
+          // });
+        } catch (error) {
+          res.send({ status: 400, message: error.message });
+        }
       } else {
         try {
           // MongoClient.connect(url, function (err, db) {
