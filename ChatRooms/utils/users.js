@@ -36,6 +36,10 @@ function userLeave(id) {
 function getRoomUsers(room) {
   return ChatRoomUsers.filter(user => user.ChatRoom === room);
 }
+// Get room users
+function getListLiveUsers(room) {
+  return ChatRoomUsers.filter(user => user.ChatRoom === room);
+}
 
 module.exports = {
   userJoin,
@@ -43,5 +47,6 @@ module.exports = {
   userLeave,
   getRoomUsers,
   ConnectedList,
-  Connected
+  Connected,
+  getListLiveUsers
 };

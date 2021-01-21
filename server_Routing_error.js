@@ -22,6 +22,8 @@ const ChatRoomsDB = require('./ChatRooms/Database/dbaccess');
 const API_Routing_ChatRooms = require('./ChatRooms/Routing/Routing')
 const {SocketService} = require('./ChatRooms/utils/SocketService');
 
+const userController = require('./modules/users/controller/usercontroller');
+
 app.set('port', 9481);
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'Files/Images'))); //ChatBoat/ChatRooms image icons access from server
@@ -44,6 +46,9 @@ app.use((req, res, next) => {
     next();
 });
 app.use('/api/v1', routes);
+
+app.get('/updateUserChatRoomsPreference', processUserAndChatRooms);
+app.post('/updateUserChatRoomsPreference', processUserAndChatRooms);
 // app.get('/api/v1', (req, res) => {
 //     res.send("Hello world");
 // });
@@ -76,13 +81,30 @@ server.listen(app.get('port'), () => {
     console.log('App is running on port: ', app.get('port'));
 });
 
+async function processUserAndChatRooms(req,res){
+    try {
+        // // JWT Authentication
+        // let JWTToken = req.body.Token;
+        // let Response = await Authenticate.UserAuthenticate(JWTToken);
+        // if(Response.status === 200){
+            let resp = await userController.createaccount(req,res);
+            res.send(resp);
+            await API_Routing_ChatRooms.Routing(req,res);
+        // }else{
+        //     res.send(Response);
+        // }
+    } catch (error) {
+        res.send({status:400, message: error.message});
+    }
+}
+
 async function processRequest(req,res){
     try {
         // // JWT Authentication
         // let JWTToken = req.body.Token;
         // let Response = await Authenticate.UserAuthenticate(JWTToken);
         // if(Response.status === 200){
-            await API_Routing_ChatBoat.Routing(req,res);
+            await API_Routing_ChatRooms.Routing(req,res);
         // }else{
         //     res.send(Response);
         // }

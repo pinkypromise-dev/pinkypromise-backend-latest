@@ -19,13 +19,20 @@ async function updateUserChatRooms(req,res){
               let FilterDataSet = UserChatRooms[0].chatroomperference.filter((Data,Index)=>{return(Data.Active === false)}); // fILTERING iNACTIVE CHAT ROOMS
               if(FilterDataSet.length > 0){
                 // HERE GOING TO CHANGE INACTIVE ACTIVE FOR AN CHAT ROOM
-                var QueryDataSet = {collection: req.ChatRoomId,query: {},Project: true,ProjectData: {ID:1,UserID:1},Limit: true,LimitValue: 1,Sort: true,SortQuery: {ID: -1}}
+                var QueryDataSet = {collection: Data[i].ChatRoomID,query: {},Project: true,ProjectData: {ID:1,UserID:1},Limit: true,LimitValue: 1,Sort: true,SortQuery: {ID: -1}}
                 var Response = await Database.GetAccess(QueryDataSet);
                 if(Response.length > 0){
                   Data[i].LatSeenMessageID = Response[0].ID;
                 }
               }
-            }  
+            }else{
+              // HERE GOING TO CHANGE INACTIVE ACTIVE FOR AN CHAT ROOM
+              var QueryDataSet = {collection: Data[i].ChatRoomID,query: {},Project: true,ProjectData: {ID:1,UserID:1},Limit: true,LimitValue: 1,Sort: true,SortQuery: {ID: -1}}
+              var Response = await Database.GetAccess(QueryDataSet);
+              if(Response.length > 0){
+                Data[i].LatSeenMessageID = Response[0].ID;
+              }
+            }
           }
         }
       }

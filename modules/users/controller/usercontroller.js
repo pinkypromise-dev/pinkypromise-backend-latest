@@ -396,6 +396,8 @@ const changepassword = (req, res) => {
 
 //Create Account
 const createaccount = (req, res) => {
+    // console.log("success from create account")
+    // return({status:200,message:"success from create account"})
     const languageCode = req.query.languageCode || 'en';
     const userid = req.user._id || req.body.userid
     let flag = Validator(req.body, ['username', 'height', 'weight', 'gender', 'healthissue', 'dob'])

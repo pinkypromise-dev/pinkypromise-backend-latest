@@ -23,6 +23,12 @@ async function UpdateAccess(req){
 }
 exports.UpdateAccess=UpdateAccess;
 
+async function GetDbAccess(req){
+    let response = await Mongo.db('ChatBoat').collection(req.collection).findOne(req.query);
+    return(response);    
+}
+exports.GetDbAccess=GetDbAccess;
+
 async function GetAccess(req){
     try{
         if(req.Sort === false){

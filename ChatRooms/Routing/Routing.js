@@ -5,6 +5,7 @@ const UpdateChatRoomActivity = require("../Model/UpdateChatRoomActivity");
 const updateUserChatRooms = require("../Model/updateUserChatRooms");
 const getListChatRooms = require("../Model/getListChatRooms");
 const SocketConnectionTesting = require("../Model/SocketConnectionTesting");
+const getLiveUsers = require("../Model/getLiveUsers");
 
 async function Routing(req,res){
     try{
@@ -25,11 +26,17 @@ async function Routing(req,res){
             case "updateUserChatRooms":
                 func = updateUserChatRooms.processInput;
                 break;
+            case "updateUserChatRoomsPreference":
+                func = updateUserChatRooms.processInput;
+                break;
             case "getListChatRooms":
                 func = getListChatRooms.processInput;
                 break;
             case "SocketConnectionTesting":
                 func = SocketConnectionTesting.processInput;
+                break;
+            case "getLiveUsers":
+                func = getLiveUsers.processInput;
                 break;
             default:
                 func = null;

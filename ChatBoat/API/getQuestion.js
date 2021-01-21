@@ -21,11 +21,11 @@ async function getQuestion(req,res){
             if(Response.length > 0){
                 let ResponseData = Response[0];
                 for(let s=0;s<ResponseData.Options.length;s++){
-                    if(QID === 4 && TID === 1){
-                        ResponseData.Options[s].RefType = "Diagnostic Result";
-                    }else{
+                    // if(QID === 4 && TID === 1){
+                    //     ResponseData.Options[s].RefType = "Diagnostic Result";
+                    // }else{
                         ResponseData.Options[s].RefType = "";
-                    }
+                    // }
                 }
                 if(QID === 18){
                     let SelectedOptions= req.SelectedOptions;
