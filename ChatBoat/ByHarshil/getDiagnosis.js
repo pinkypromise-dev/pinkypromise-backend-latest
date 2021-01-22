@@ -2086,8 +2086,82 @@ async function getDiagnosis(req, res) {
 
             if (SelectedOptions[1].QID == 94 && SelectedOptions[0].ID == 2) {
               if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 1) {
-                let selectedDiagnosis = 37;
+                let selectedDiagnosis;
                 if (bmi < 18.5) {
+                  selectedDiagnosis = 37;
+                }
+              }
+              if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 2) {
+                let points = 0;
+
+                SelectedOptions.map((elem) => {
+                  if (elem.QID == 24 && elem.ID == 1) points += 1;
+                  if (elem.QID == 25 && elem.ID == 1) points += 1;
+                  if (elem.QID == 26 && elem.ID == 1) points += 1;
+                  if (elem.QID == 27 && elem.ID == 1) points += 1;
+                  if (elem.QID == 28 && elem.ID == 1) points += 1;
+                  if (elem.QID == 29 && elem.ID == 1) points += 1;
+                  if (elem.QID == 30 && elem.ID == 1) points += 1;
+                  if (elem.QID == 31 && elem.ID == 1) points += 1;
+                });
+
+                let { overweight } = req.body;
+                let status;
+                if (points < 3 && !overweight) {
+                  //low
+                  status = "low";
+                  selectedDiagnosis = 65;
+                }
+                if (points < 3 && overweight) {
+                  //medium
+                  status = "medium";
+                  selectedDiagnosis = 5;
+                }
+                if (points == 3) {
+                  //medium
+                  status = "medium";
+                  selectedDiagnosis = 5;
+                }
+                if (points == 4) {
+                  //high
+                  status = "high";
+                  selectedDiagnosis = 6;
+                }
+                if (points == 5) {
+                  //high -v.high
+                  status = "high to very high";
+                  selectedDiagnosis = 6;
+                }
+                if (points >= 6) {
+                  //V.high
+                  status = "very high";
+                  selectedDiagnosis = 6;
+                }
+
+                count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: selectedDiagnosis, TID },
+                  });
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: { ...result, count },
+                    });
+                  } else res.send({ status: 404, message: "Data Not Found" });
+                  //   }
+                  // );
+                  // });
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
                 }
               }
             }
@@ -2203,6 +2277,9 @@ async function getDiagnosis(req, res) {
           if (SelectedOptions[3].QID == 42 && SelectedOptions[3].ID == 1) {
             text += thinner + "\n\n";
           }
+          if (text == "")
+            text =
+              "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
 
           result = {
             Message: text,
@@ -2235,6 +2312,9 @@ async function getDiagnosis(req, res) {
               text += thinner + "\n\n";
             }
           });
+          if (text == "")
+            text =
+              "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
           result = {
             Message: text,
             NextRef: 43,
@@ -2266,6 +2346,10 @@ async function getDiagnosis(req, res) {
               text += thinner + "\n\n";
             }
           });
+
+          if ((text = ""))
+            text =
+              "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
           result = {
             Message: text,
             NextRef: 43,
@@ -3229,6 +3313,18 @@ async function getDiagnosis(req, res) {
               return;
             }
           }
+        }
+
+        if(SelectedOptions[0].QID == 146){
+          const answers = SelectedOptions.filter(elem => elem.ID == 1)
+          let selectedDiagnosis
+          if(answers.length < 1){
+            if(age > 36) {
+              selectedDiagnosis = 69;
+            }
+            else selectedDiagnosis = 71
+          }
+
         }
         // ----------------------------------------------------------
       } else {
