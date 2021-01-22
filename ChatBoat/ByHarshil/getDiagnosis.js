@@ -2090,6 +2090,27 @@ async function getDiagnosis(req, res) {
                 if (bmi < 18.5) {
                   selectedDiagnosis = 37;
                 }
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: selectedDiagnosis, TID },
+                  });
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: result,
+                    });
+                  } else res.send({ status: 404, message: "Data Not Found" });
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
               }
               if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 2) {
                 let points = 0;
@@ -2347,7 +2368,7 @@ async function getDiagnosis(req, res) {
             }
           });
 
-          if ((text = ""))
+          if (text == "")
             text =
               "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
           result = {
@@ -2596,6 +2617,81 @@ async function getDiagnosis(req, res) {
           }
         }
 
+        if (SelectedOptions[0].QID == 152) {
+          let points = 0;
+
+          SelectedOptions.map((elem) => {
+            if (elem.QID == 152 && elem.ID == 1) points += 1;
+            if (elem.QID == 153 && elem.ID == 1) points += 1;
+            if (elem.QID == 154 && elem.ID == 1) points += 1;
+            if (elem.QID == 155 && elem.ID == 1) points += 1;
+            if (elem.QID == 156 && elem.ID == 1) points += 1;
+            if (elem.QID == 157 && elem.ID == 1) points += 1;
+            if (elem.QID == 158 && elem.ID == 1) points += 1;
+            if (elem.QID == 159 && elem.ID == 1) points += 1;
+          });
+
+          let { overweight } = req.body;
+          let status;
+          if (points < 3 && !overweight) {
+            //low
+            status = "low";
+            selectedDiagnosis = 4;
+          }
+          if (points < 3 && overweight) {
+            //medium
+            status = "medium";
+            selectedDiagnosis = 5;
+          }
+          if (points == 3) {
+            //medium
+            status = "medium";
+            selectedDiagnosis = 5;
+          }
+          if (points == 4) {
+            //high
+            status = "high";
+            selectedDiagnosis = 6;
+          }
+          if (points == 5) {
+            //high -v.high
+            status = "high to very high";
+            selectedDiagnosis = 6;
+          }
+          if (points >= 6) {
+            //V.high
+            status = "very high";
+            selectedDiagnosis = 6;
+          }
+
+          count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
+
+          try {
+            let result = await Database.GetDbAccess({
+              collection: "diagnosis",
+              query: { MsgId: selectedDiagnosis, TID },
+            });
+            if (result) {
+              if (result.RefType === "Diagnostic Result") {
+                result.RefType = "diagnosis";
+              }
+              if (result.RefType === "" && result.diagnosis2 === true) {
+                result.RefType = "Diagnostic Result";
+              }
+              res.send({
+                status: 200,
+                message: "success",
+                data: { ...result, count },
+              });
+            } else res.send({ status: 404, message: "Data Not Found" });
+            //   }
+            // );
+            // });
+          } catch (error) {
+            res.send({ status: 400, message: error.message });
+          }
+        }
+
         //PCOS SCREENING 1
         if (SelectedOptions[0].QID == 8) {
           let points = 0;
@@ -2668,6 +2764,45 @@ async function getDiagnosis(req, res) {
                 status: 200,
                 message: "success",
                 data: { ...result, result },
+              });
+              return;
+            } else res.send({ status: 404, message: "Data Not Found" });
+            return;
+          } catch (error) {
+            res.send({ status: 400, message: error.message });
+            return;
+          }
+        }
+
+        if (SelectedOptions[0].QID == 146) {
+          let selectedDiagnosis;
+          if (age > 36) {
+            selectedDiagnosis = 72;
+          } else {
+            const answers = SelectedOptions.filter((elem) => elem.ID == 1);
+            if (answers.length < 1) {
+              selectedDiagnosis = 79;
+            } else {
+              selectedDiagnosis = 78;
+            }
+          }
+
+          try {
+            let result = await Database.GetDbAccess({
+              collection: "diagnosis",
+              query: { MsgId: selectedDiagnosis, TID },
+            });
+            if (result) {
+              if (result.RefType === "Diagnostic Result") {
+                result.RefType = "diagnosis";
+              }
+              if (result.RefType === "" && result.diagnosis2 === true) {
+                result.RefType = "Diagnostic Result";
+              }
+              res.send({
+                status: 200,
+                message: "success",
+                data: result,
               });
               return;
             } else res.send({ status: 404, message: "Data Not Found" });
@@ -3315,33 +3450,94 @@ async function getDiagnosis(req, res) {
           }
         }
 
-        if(SelectedOptions[0].QID == 146){
-          const answers = SelectedOptions.filter(elem => elem.ID == 1)
-          let selectedDiagnosis
-          if(answers.length < 1){
-            if(age > 36) {
+        if (SelectedOptions[0].QID == 146) {
+          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
+          let selectedDiagnosis;
+          if (answers.length < 1) {
+            if (age > 36) {
               selectedDiagnosis = 69;
-            }
-            else selectedDiagnosis = 71
+            } else selectedDiagnosis = 71;
           }
+        }
 
+        if (SelectedOptions[0].QID == 43) {
+          let points = 0;
+          if (answers[0] == 1) points += 2;
+          if (answers[1] == 1) points += 1;
+          if (answers[2] == 1) points += 1;
+          if (answers[3] == 1) points += 1;
+          if (answers[4] == 1) points += 1;
+          if (answers[5] == 1) points += 2;
+          if (answers.length > 6) {
+            if (answers[6] == 1) points += 1;
+          }
+          //LOW
+          if (points < 3) {
+            try {
+              let result = await Database.GetDbAccess({
+                collection: "diagnosis",
+                query: { MsgId: 1, TID },
+              });
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              } else
+                res.send({
+                  status: 404,
+                  message: "Data Not Found",
+                });
+              return;
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+              return;
+            }
+          }
+          //MEDIUM OR HIGH
+          else {
+            try {
+              let result = await Database.GetDbAccess({
+                collection: "diagnosis",
+                query: { MsgId: 54, TID },
+              });
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              } else
+                res.send({
+                  status: 404,
+                  message: "Data Not Found",
+                });
+              return;
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+            }
+          }
         }
         // ----------------------------------------------------------
       } else {
         try {
-          // MongoClient.connect(url, function (err, db) {
-          //   if (err) throw err;
-          //   const dbo = db.db("ChatBoat");
           let result = await Database.GetDbAccess({
             collection: "diagnosis",
             query: { MsgId, TID },
           });
-          // dbo
-          //   .collection("diagnosis")
-          //   .findOne({ MsgId, TID }, function (err, result) {
-          //     if (err) throw err;
-          //     console.log(result);
-          //     // db.close();
           if (result) {
             if (result.RefType === "Diagnostic Result") {
               result.RefType = "diagnosis";
