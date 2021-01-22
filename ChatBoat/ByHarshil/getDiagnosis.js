@@ -1919,6 +1919,88 @@ async function getDiagnosis(req, res) {
                 res.send({ status: 400, message: error.message });
               }
             }
+            if (SelectedOptions[2].QID == 45 && SelectedOptions[2].ID == 1) {
+              if (age > 36) {
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: selectedDiagnosis, TID },
+                  });
+
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: { ...result, count },
+                    });
+                  } else res.send({ status: 404, message: "Data Not Found" });
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              } else {
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: 55, TID },
+                  });
+
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: result,
+                    });
+                  } else res.send({ status: 404, message: "Data Not Found" });
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              }
+            }
+          }
+
+          if (SelectedOptions[1].QID == 2 && SelectedOptions[1].ID == 4) {
+            let selectedDiagnosis;
+            if (age > 36) {
+              selectedDiagnosis = 59;
+            } else selectedDiagnosis = 60;
+
+            try {
+              let result = await Database.GetDbAccess({
+                collection: "diagnosis",
+                query: { MsgId: selectedDiagnosis, TID },
+              });
+
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              } else res.send({ status: 404, message: "Data Not Found" });
+              //   }
+              // );
+              // });
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+            }
           }
         }
 
@@ -1973,8 +2055,8 @@ async function getDiagnosis(req, res) {
                 else {
                   try {
                     let result = await Database.GetDbAccess({
-                      collection: "questions",
-                      query: { QID: 62, TID },
+                      collection: "diagnosis",
+                      query: { MsgId: 54, TID },
                     });
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
@@ -1996,426 +2078,6 @@ async function getDiagnosis(req, res) {
                     return;
                   } catch (error) {
                     res.send({ status: 400, message: error.message });
-                  }
-                }
-              } else {
-                //Previous answers array had all yes - 10 answers, 2 main questions 8 sub
-                let endo = 0,
-                  fibroid = 0,
-                  polyps = 0,
-                  adeno = 0;
-                if (answers.length == 28) {
-                  if (answers[10] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                    adeno += 1;
-                  }
-
-                  if (answers[11] == 1) {
-                    adeno += 1;
-                  }
-
-                  if (answers[12] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                  }
-                  if (answers[13] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                    polyps += 1;
-                    adeno += 1;
-                  }
-                  if (answers[14] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                  }
-                  if (answers[15] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[16] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                    polyps += 1;
-                  }
-                  if (answers[17] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[18] == 1) {
-                    fibroid += 20;
-                  }
-                  if (answers[19] == 1) {
-                    fibroid += 20;
-                  }
-                  if (answers[20] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[21] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[22] == 1) {
-                  }
-                  if (answers[23] == 1) {
-                    fibroid += 20;
-                  }
-                  if (answers[24] == 1) {
-                    polyps += 20;
-                  }
-                  if (answers[25] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[26] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[27] == 1) {
-                    polyps += 20;
-                  }
-
-                  let selectedDiagnosis,
-                    diagnosis = true;
-                  //ENDO
-                  if (age < 35) {
-                    if (answers[10] == 1) {
-                      selectedDiagnosis = 1;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  //ENDO VS FIBROID
-                  else if (age >= 30 && age <= 35) {
-                    if (answers[10] == 1) {
-                      if (endo > fibroid) {
-                        selectedDiagnosis = 1;
-                      } else {
-                        selectedDiagnosis = 2;
-                      }
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  //FIBROID
-                  else if (age > 35 && age < 40) {
-                    if (answers[10] == 1) {
-                      selectedDiagnosis = 2;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  //FIBROID VS POLYPS VS ADENO
-                  else if (age >= 40 && age < 45) {
-                    if (
-                      fibroid > polyps &&
-                      fibroid > adeno &&
-                      answers[10] == 1
-                    ) {
-                      selectedDiagnosis = 2;
-                    } else if (
-                      polyps > fibroid &&
-                      polyps > adeno &&
-                      (answers[13] == 1 || answers[16] == 1)
-                    ) {
-                      selectedDiagnosis = 3;
-                    } else if (
-                      adeno > fibroid &&
-                      adeno > polyps &&
-                      answers[10] == 1 &&
-                      answers[11] == 1
-                    ) {
-                      selectedDiagnosis = 4;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-                  //POLYPS VS ADENO
-                  else {
-                    if (
-                      polyps > adeno &&
-                      (answers[13] == 1 || answers[16] == 1)
-                    ) {
-                      selectedDiagnosis = 3;
-                    } else if (
-                      adeno > polyps &&
-                      answers[10] == 1 &&
-                      answers[11] == 1
-                    ) {
-                      selectedDiagnosis = 4;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  if (diagnosis) {
-                    try {
-                      let result = await Database.GetDbAccess({
-                        collection: "diagnosis2",
-                        query: { ID: selectedDiagnosis, TID },
-                      });
-                      if (result) {
-                        if (result.RefType === "Diagnostic Result") {
-                          result.RefType = "diagnosis";
-                        }
-                        if (
-                          result.RefType === "" &&
-                          result.diagnosis2 === true
-                        ) {
-                          result.RefType = "Diagnostic Result";
-                        }
-                        res.send({
-                          status: 200,
-                          message: "success",
-                          data: result,
-                        });
-                      } else
-                        res.send({
-                          status: 404,
-                          message: "Data Not Found",
-                        });
-                      return;
-                    } catch (error) {
-                      res.send({ status: 400, message: error.message });
-                    }
-                  } else {
-                    try {
-                      let result = await Database.GetDbAccess({
-                        collection: "diagnosis",
-                        query: { ID: selectedDiagnosis, TID },
-                      });
-                      if (result) {
-                        if (result.RefType === "Diagnostic Result") {
-                          result.RefType = "diagnosis";
-                        }
-                        if (
-                          result.RefType === "" &&
-                          result.diagnosis2 === true
-                        ) {
-                          result.RefType = "Diagnostic Result";
-                        }
-                        res.send({
-                          status: 200,
-                          message: "success",
-                          data: result,
-                        });
-                      } else
-                        res.send({
-                          status: 404,
-                          message: "Data Not Found",
-                        });
-                      return;
-                    } catch (error) {
-                      res.send({ status: 400, message: error.message });
-                    }
-                  }
-                }
-
-                if (answers.length == 27) {
-                  if (answers[9] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                    adeno += 1;
-                  }
-
-                  if (answers[10] == 1) {
-                    adeno += 1;
-                  }
-
-                  if (answers[11] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                  }
-                  if (answers[12] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                    polyps += 1;
-                    adeno += 1;
-                  }
-                  if (answers[13] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                  }
-                  if (answers[14] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[15] == 1) {
-                    endo += 1;
-                    fibroid += 1;
-                    polyps += 1;
-                  }
-                  if (answers[16] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[17] == 1) {
-                    fibroid += 20;
-                  }
-                  if (answers[18] == 1) {
-                    fibroid += 20;
-                  }
-                  if (answers[19] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[20] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[21] == 1) {
-                  }
-                  if (answers[22] == 1) {
-                    fibroid += 20;
-                  }
-                  if (answers[23] == 1) {
-                    polyps += 20;
-                  }
-                  if (answers[24] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[25] == 1) {
-                    endo += 20;
-                  }
-                  if (answers[26] == 1) {
-                    polyps += 20;
-                  }
-
-                  let selectedDiagnosis,
-                    diagnosis = true;
-                  //ENDO
-                  if (age < 35) {
-                    if (answers[9] == 1) {
-                      selectedDiagnosis = 1;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  //ENDO VS FIBROID
-                  else if (age >= 30 && age <= 35) {
-                    if (answers[9] == 1) {
-                      if (endo > fibroid) {
-                        selectedDiagnosis = 1;
-                      } else {
-                        selectedDiagnosis = 2;
-                      }
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  //FIBROID
-                  else if (age > 35 && age < 40) {
-                    if (answers[9] == 1) {
-                      selectedDiagnosis = 2;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  //FIBROID VS POLYPS VS ADENO
-                  else if (age >= 40 && age < 45) {
-                    if (
-                      fibroid > polyps &&
-                      fibroid > adeno &&
-                      answers[9] == 1
-                    ) {
-                      selectedDiagnosis = 2;
-                    } else if (
-                      polyps > fibroid &&
-                      polyps > adeno &&
-                      (answers[12] == 1 || answers[15] == 1)
-                    ) {
-                      selectedDiagnosis = 3;
-                    } else if (
-                      adeno > fibroid &&
-                      adeno > polyps &&
-                      answers[9] == 1 &&
-                      answers[10] == 1
-                    ) {
-                      selectedDiagnosis = 4;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-                  //POLYPS VS ADENO
-                  else {
-                    if (
-                      polyps > adeno &&
-                      (answers[12] == 1 || answers[15] == 1)
-                    ) {
-                      selectedDiagnosis = 3;
-                    } else if (
-                      adeno > polyps &&
-                      answers[9] == 1 &&
-                      answers[10] == 1
-                    ) {
-                      selectedDiagnosis = 4;
-                    } else {
-                      diagnosis = false;
-                    }
-                  }
-
-                  if (diagnosis) {
-                    try {
-                      let result = await Database.GetDbAccess({
-                        collection: "diagnosis2",
-                        query: { ID: selectedDiagnosis, TID },
-                      });
-                      if (result) {
-                        if (result.RefType === "Diagnostic Result") {
-                          result.RefType = "diagnosis";
-                        }
-                        if (
-                          result.RefType === "" &&
-                          result.diagnosis2 === true
-                        ) {
-                          result.RefType = "Diagnostic Result";
-                        }
-                        res.send({
-                          status: 200,
-                          message: "success",
-                          data: result,
-                        });
-                        return;
-                      } else
-                        res.send({
-                          status: 404,
-                          message: "Data Not Found",
-                        });
-                      return;
-                    } catch (error) {
-                      res.send({ status: 400, message: error.message });
-                      return;
-                    }
-                    return;
-                  } else {
-                    try {
-                      let result = await Database.GetDbAccess({
-                        collection: "diagnosis",
-                        query: { ID: selectedDiagnosis, TID },
-                      });
-                      if (result) {
-                        if (result.RefType === "Diagnostic Result") {
-                          result.RefType = "diagnosis";
-                        }
-                        if (
-                          result.RefType === "" &&
-                          result.diagnosis2 === true
-                        ) {
-                          result.RefType = "Diagnostic Result";
-                        }
-                        res.send({
-                          status: 200,
-                          message: "success",
-                          data: result,
-                        });
-                        return;
-                      } else
-                        res.send({
-                          status: 404,
-                          message: "Data Not Found",
-                        });
-                      return;
-                    } catch (error) {
-                      res.send({ status: 400, message: error.message });
-                      return;
-                    }
                   }
                 }
               }
@@ -2666,22 +2328,10 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
-            // MongoClient.connect(url, function (err, db) {
-            //   if (err) throw err;
-            //   const dbo = db.db("ChatBoat");
             let result = await Database.GetDbAccess({
               collection: "diagnosis",
               query: { MsgId: selectedDiagnosis, TID },
             });
-            // dbo
-            //   .collection("diagnosis")
-            //   .findOne(
-            //     { MsgId: selectedDiagnosis, TID },
-            //     function (err, result) {
-            //       if (err) throw err;
-            //       console.log(result);
-            //       // db.close();
-            //       console.log(answers.length);
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -2753,22 +2403,10 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
-            // MongoClient.connect(url, function (err, db) {
-            //   if (err) throw err;
-            //   const dbo = db.db("ChatBoat");
             let result = await Database.GetDbAccess({
               collection: "diagnosis",
               query: { MsgId: selectedDiagnosis, TID },
             });
-            // dbo
-            //   .collection("diagnosis")
-            //   .findOne(
-            //     { MsgId: selectedDiagnosis, TID },
-            //     function (err, result) {
-            //       if (err) throw err;
-            //       console.log(result);
-            //       // db.close();
-            //       console.log(answers.length);
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -2782,9 +2420,6 @@ async function getDiagnosis(req, res) {
                 data: { ...result, count },
               });
             } else res.send({ status: 404, message: "Data Not Found" });
-            //   }
-            // );
-            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2809,43 +2444,7 @@ async function getDiagnosis(req, res) {
           if (points < 3 && !overweight) {
             //low
             status = "low";
-            selectedDiagnosis = 105;
-            try {
-              // MongoClient.connect(url, function (err, db) {
-              //   if (err) throw err;
-              //   const dbo = db.db("ChatBoat");
-              let result = await Database.GetDbAccess({
-                collection: "questions",
-                query: { QID: selectedDiagnosis, TID },
-              });
-              // dbo
-              //   .collection("questions")
-              //   .findOne(
-              //     { QID: selectedDiagnosis, TID },
-              //     function (err, result) {
-              //       if (err) throw err;
-              //       console.log(result);
-              //       // db.close();
-              //       console.log(answers.length);
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: { ...result, count },
-                });
-              } else res.send({ status: 404, message: "Data Not Found" });
-              //   }
-              // );
-              // });
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-            }
+            selectedDiagnosis = 56;
           }
           if (points < 3 && overweight) {
             //medium
@@ -3147,6 +2746,490 @@ async function getDiagnosis(req, res) {
           }
         }
 
+        if (SelectedOptions[0].QID == 75) {
+          {
+            //Previous answers array had all yes - 10 answers, 2 main questions 8 sub
+            let endo = 0,
+              fibroid = 0,
+              polyps = 0,
+              adeno = 0;
+            if (answers.length == 18) {
+              if (answers[0] == 1) {
+                endo += 1;
+                fibroid += 1;
+                adeno += 1;
+              }
+
+              if (answers[1] == 1) {
+                adeno += 1;
+              }
+
+              if (answers[2] == 1) {
+                endo += 1;
+                fibroid += 1;
+              }
+              if (answers[3] == 1) {
+                endo += 1;
+                fibroid += 1;
+                polyps += 1;
+                adeno += 1;
+              }
+              if (answers[4] == 1) {
+                endo += 1;
+                fibroid += 1;
+              }
+              if (answers[5] == 1) {
+                endo += 20;
+              }
+              if (answers[6] == 1) {
+                endo += 1;
+                fibroid += 1;
+                polyps += 1;
+              }
+              if (answers[7] == 1) {
+                endo += 20;
+              }
+              if (answers[8] == 1) {
+                fibroid += 20;
+              }
+              if (answers[9] == 1) {
+                fibroid += 20;
+              }
+              if (answers[10] == 1) {
+                endo += 20;
+              }
+              if (answers[11] == 1) {
+                endo += 20;
+              }
+              if (answers[12] == 1) {
+              }
+              if (answers[13] == 1) {
+                fibroid += 20;
+              }
+              if (answers[14] == 1) {
+                polyps += 20;
+              }
+              if (answers[15] == 1) {
+                endo += 20;
+              }
+              if (answers[16] == 1) {
+                endo += 20;
+              }
+              if (answers[17] == 1) {
+                polyps += 20;
+              }
+
+              console.log(endo, fibroid, polyps, adeno);
+              let selectedDiagnosis,
+                diagnosis = true;
+              //ENDO
+              if (age < 35) {
+                if (answers[0] == 1) {
+                  selectedDiagnosis = 1;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              //ENDO VS FIBROID
+              else if (age >= 30 && age <= 35) {
+                if (answers[0] == 1) {
+                  if (endo > fibroid) {
+                    selectedDiagnosis = 1;
+                    diagnosis = true;
+                  } else {
+                    selectedDiagnosis = 2;
+                    diagnosis = true;
+                  }
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              //FIBROID
+              else if (age > 35 && age < 40) {
+                if (answers[0] == 1) {
+                  selectedDiagnosis = 2;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              //FIBROID VS POLYPS VS ADENO
+              else if (age >= 40 && age < 45) {
+                if (fibroid > polyps && fibroid > adeno && answers[0] == 1) {
+                  selectedDiagnosis = 2;
+                  diagnosis = true;
+                } else if (
+                  polyps > fibroid &&
+                  polyps > adeno &&
+                  (answers[3] == 1 || answers[6] == 1)
+                ) {
+                  selectedDiagnosis = 3;
+                  diagnosis = true;
+                } else if (
+                  adeno > fibroid &&
+                  adeno > polyps &&
+                  answers[0] == 1 &&
+                  answers[1] == 1
+                ) {
+                  selectedDiagnosis = 4;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+              //POLYPS VS ADENO
+              else {
+                if (polyps > adeno && (answers[3] == 1 || answers[6] == 1)) {
+                  selectedDiagnosis = 3;
+                  diagnosis = true;
+                } else if (
+                  adeno > polyps &&
+                  answers[0] == 1 &&
+                  answers[1] == 1
+                ) {
+                  selectedDiagnosis = 4;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              if (diagnosis) {
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: selectedDiagnosis, TID },
+                  });
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: [result],
+                    });
+                  } else
+                    res.send({
+                      status: 404,
+                      message: "Data Not Found",
+                    });
+                  return;
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              } else {
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: 2, TID },
+                  });
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: result,
+                    });
+                  } else
+                    res.send({
+                      status: 404,
+                      message: "Data Not Found",
+                    });
+                  return;
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              }
+            }
+          }
+        }
+
+        if (SelectedOptions[0].QID == 116) {
+          {
+            //Previous answers array had all yes - 10 answers, 2 main questions 8 sub
+            let endo = 0,
+              fibroid = 0,
+              polyps = 0,
+              adeno = 0;
+            if (answers.length == 18) {
+              if (answers[0] == 1) {
+                endo += 1;
+                fibroid += 1;
+                adeno += 1;
+              }
+
+              if (answers[1] == 1) {
+                adeno += 1;
+              }
+
+              if (answers[2] == 1) {
+                endo += 1;
+                fibroid += 1;
+              }
+              if (answers[3] == 1) {
+                endo += 1;
+                fibroid += 1;
+                polyps += 1;
+                adeno += 1;
+              }
+              if (answers[4] == 1) {
+                endo += 1;
+                fibroid += 1;
+              }
+              if (answers[5] == 1) {
+                endo += 20;
+              }
+              if (answers[6] == 1) {
+                endo += 1;
+                fibroid += 1;
+                polyps += 1;
+              }
+              if (answers[7] == 1) {
+                endo += 20;
+              }
+              if (answers[8] == 1) {
+                fibroid += 20;
+              }
+              if (answers[9] == 1) {
+                fibroid += 20;
+              }
+              if (answers[10] == 1) {
+                endo += 20;
+              }
+              if (answers[11] == 1) {
+                endo += 20;
+              }
+              if (answers[12] == 1) {
+              }
+              if (answers[13] == 1) {
+                fibroid += 20;
+              }
+              if (answers[14] == 1) {
+                polyps += 20;
+              }
+              if (answers[15] == 1) {
+                endo += 20;
+              }
+              if (answers[16] == 1) {
+                endo += 20;
+              }
+              if (answers[17] == 1) {
+                polyps += 20;
+              }
+
+              console.log(endo, fibroid, polyps, adeno);
+              let selectedDiagnosis,
+                diagnosis = true;
+              //ENDO
+              if (age < 35) {
+                if (answers[0] == 1) {
+                  selectedDiagnosis = 1;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              //ENDO VS FIBROID
+              else if (age >= 30 && age <= 35) {
+                if (answers[0] == 1) {
+                  if (endo > fibroid) {
+                    selectedDiagnosis = 1;
+                    diagnosis = true;
+                  } else {
+                    selectedDiagnosis = 2;
+                    diagnosis = true;
+                  }
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              //FIBROID
+              else if (age > 35 && age < 40) {
+                if (answers[0] == 1) {
+                  selectedDiagnosis = 2;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              //FIBROID VS POLYPS VS ADENO
+              else if (age >= 40 && age < 45) {
+                if (fibroid > polyps && fibroid > adeno && answers[0] == 1) {
+                  selectedDiagnosis = 2;
+                  diagnosis = true;
+                } else if (
+                  polyps > fibroid &&
+                  polyps > adeno &&
+                  (answers[3] == 1 || answers[6] == 1)
+                ) {
+                  selectedDiagnosis = 3;
+                  diagnosis = true;
+                } else if (
+                  adeno > fibroid &&
+                  adeno > polyps &&
+                  answers[0] == 1 &&
+                  answers[1] == 1
+                ) {
+                  selectedDiagnosis = 4;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+              //POLYPS VS ADENO
+              else {
+                if (polyps > adeno && (answers[3] == 1 || answers[6] == 1)) {
+                  selectedDiagnosis = 3;
+                  diagnosis = true;
+                } else if (
+                  adeno > polyps &&
+                  answers[0] == 1 &&
+                  answers[1] == 1
+                ) {
+                  selectedDiagnosis = 4;
+                  diagnosis = true;
+                } else {
+                  diagnosis = false;
+                }
+              }
+
+              if (diagnosis) {
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: selectedDiagnosis, TID },
+                  });
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: result,
+                    });
+                  } else
+                    res.send({
+                      status: 404,
+                      message: "Data Not Found",
+                    });
+                  return;
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              } else {
+                try {
+                  let result = await Database.GetDbAccess({
+                    collection: "diagnosis",
+                    query: { MsgId: 2, TID },
+                  });
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: [result],
+                    });
+                  } else
+                    res.send({
+                      status: 404,
+                      message: "Data Not Found",
+                    });
+                  return;
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              }
+            }
+          }
+        }
+
+        if (SelectedOptions[0].QID == 58) {
+          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
+
+          if (answers.length < 1) {
+            //57 diagnosis
+            try {
+              let result = await Database.GetDbAccess({
+                collection: "diagnosis",
+                query: { MsgId: 57, TID },
+              });
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              } else
+                res.send({
+                  status: 404,
+                  message: "Data Not Found",
+                });
+              return;
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+              return;
+            }
+          } else {
+            try {
+              let result = await Database.GetDbAccess({
+                collection: "diagnosis",
+                query: { MsgId: 58, TID },
+              });
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: result,
+                });
+              } else
+                res.send({
+                  status: 404,
+                  message: "Data Not Found",
+                });
+              return;
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+              return;
+            }
+          }
+        }
         // ----------------------------------------------------------
       } else {
         try {
