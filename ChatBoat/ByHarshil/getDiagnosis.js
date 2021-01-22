@@ -2998,7 +2998,7 @@ async function getDiagnosis(req, res) {
                     res.send({
                       status: 200,
                       message: "success",
-                      data: [result],
+                      data: result,
                     });
                   } else
                     res.send({
