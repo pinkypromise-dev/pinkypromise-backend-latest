@@ -406,6 +406,7 @@ async function getDiagnosis(req, res) {
       let selectedDiagnosis;
       // console.log(answers.length);
       if (answers.length == 7) {
+        console.log("7");
         if (
           answers[0] == 2 &&
           answers[1] == 2 &&
@@ -421,8 +422,7 @@ async function getDiagnosis(req, res) {
           answers[1] == 2 &&
           answers[2] == 2 &&
           answers[4] == 3 &&
-          answers[6] == 2 &&
-          !selectedDiagnosis
+          answers[6] == 2
         )
           selectedDiagnosis = 1;
         else if (
@@ -437,25 +437,12 @@ async function getDiagnosis(req, res) {
         else if (
           (answers[1] == 1 || answers[2] == 1) &&
           answers[3] == 1 &&
-          answers[4] == 1 &&
-          answers[5] == 1
+          (answers[4] != 2 || answers[5] == 1)
         )
           selectedDiagnosis = 10;
-        else if (
-          (answers[1] == 1 || answers[2] == 1) &&
-          answers[3] == 1 &&
-          answers[4] == 1
-        )
-          selectedDiagnosis = 10;
-        else if (
-          answers[1] == 1 &&
-          answers[3] == 2 &&
-          answers[4] == 1 &&
-          !selectedDiagnosis
-        )
+        else if (answers[1] == 1 && answers[3] == 2 && answers[4] == 1)
           selectedDiagnosis = 15;
-        else if (answers[3] == 2 && answers[4] == 1 && !selectedDiagnosis)
-          selectedDiagnosis = 15;
+        else if (answers[3] == 2 && answers[4] == 1) selectedDiagnosis = 15;
       } else if (answers.length == 10) {
         const copyAnswers = [...answers];
         const truncatedArr = copyAnswers.splice(5, 3);
@@ -501,28 +488,16 @@ async function getDiagnosis(req, res) {
         } else if (
           (copyAnswers[1] == 1 || copyAnswers[2] == 1) &&
           copyAnswers[3] == 1 &&
-          copyAnswers[4] == 1 &&
-          copyAnswers[5] == 1
-        )
-          selectedDiagnosis = 10;
-        else if (
-          (copyAnswers[1] == 1 || copyAnswers[2] == 1) &&
-          copyAnswers[3] == 1 &&
-          copyAnswers[4] == 1
+          (copyAnswers[4] != 2 || copyAnswers[5] == 1)
         )
           selectedDiagnosis = 10;
         else if (
           copyAnswers[1] == 1 &&
           copyAnswers[3] == 2 &&
-          copyAnswers[4] == 1 &&
-          !selectedDiagnosis
+          copyAnswers[4] == 1
         )
           selectedDiagnosis = 15;
-        else if (
-          copyAnswers[3] == 2 &&
-          copyAnswers[4] == 1 &&
-          !selectedDiagnosis
-        ) {
+        else if (copyAnswers[3] == 2 && copyAnswers[4] == 1) {
           if (answers[5] == 1 && answers[6] == 1 && answers[7] == 1) {
             selectedDiagnosis = 23;
           }
@@ -3457,6 +3432,86 @@ async function getDiagnosis(req, res) {
             if (age > 36) {
               selectedDiagnosis = 69;
             } else selectedDiagnosis = 71;
+          }
+        }
+
+        if (SelectedOptions[0].QID == 145) {
+          let selectedDiagnosis;
+          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
+          SelectedOptions.map((elem) => {
+            if (elem.QID == 149 && elem.ID == 1) selectedDiagnosis = 80;
+            if (elem.QID == 149 && elem.ID == 2) selectedDiagnosis = 81;
+          });
+          if (answers.length < 1) {
+            selectedDiagnosis = 83;
+          }
+          try {
+            let result = await Database.GetDbAccess({
+              collection: "diagnosis",
+              query: { MsgId: selectedDiagnosis, TID },
+            });
+            if (result) {
+              if (result.RefType === "Diagnostic Result") {
+                result.RefType = "diagnosis";
+              }
+              if (result.RefType === "" && result.diagnosis2 === true) {
+                result.RefType = "Diagnostic Result";
+              }
+              res.send({
+                status: 200,
+                message: "success",
+                data: result,
+              });
+            } else
+              res.send({
+                status: 404,
+                message: "Data Not Found",
+              });
+            return;
+          } catch (error) {
+            res.send({ status: 400, message: error.message });
+            return;
+          }
+        }
+
+        if (SelectedOptions[0].QID == 142) {
+          //age >36
+          let selectedDiagnosis;
+          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
+
+          SelectedOptions.map((elem) => {
+            if (elem.QID == 149 && elem.ID == 1) selectedDiagnosis = 80;
+            if (elem.QID == 149 && elem.ID == 2) selectedDiagnosis = 81;
+          });
+          if (answers.length < 1) {
+            selectedDiagnosis = 83;
+          }
+          try {
+            let result = await Database.GetDbAccess({
+              collection: "diagnosis",
+              query: { MsgId: selectedDiagnosis, TID },
+            });
+            if (result) {
+              if (result.RefType === "Diagnostic Result") {
+                result.RefType = "diagnosis";
+              }
+              if (result.RefType === "" && result.diagnosis2 === true) {
+                result.RefType = "Diagnostic Result";
+              }
+              res.send({
+                status: 200,
+                message: "success",
+                data: result,
+              });
+            } else
+              res.send({
+                status: 404,
+                message: "Data Not Found",
+              });
+            return;
+          } catch (error) {
+            res.send({ status: 400, message: error.message });
+            return;
           }
         }
 
