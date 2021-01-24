@@ -6,17 +6,18 @@ async function getMessages(req,res){
       }else{
         var QueryDataSet = {
             collection: req.ChatRoomId,
-            query: {ID: {$gt: parseInt(req.LastMsgId)}},
+            query: {ID: {$lte: parseInt(req.LastMsgId)}},
             Project: true,
             ProjectData: {ID:1,UserID:1,_id:0,Avatar:1,Type:1,Text:1},
-            Limit: false,
+            Limit: true,
             LimitValue: 25,
-            Sort: false,
-            SortQuery: {ID: 1}
+            Sort: true,
+            SortQuery: {ID: -1}
         }
         var Response = await Database.GetAccess(QueryDataSet);
+	let Data = Response.sort((Obj,Obj1)=>Obj.ID-Obj1.ID);
         if(Response.length > 0){
-          return({status:200,message:"success",data: Response});
+          return({status:200,message:"success",data: Data});
         }else{
           return({status:404,message:"Data Not Found"});
         }

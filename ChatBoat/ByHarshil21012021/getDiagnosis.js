@@ -1,10 +1,13 @@
-var MongoClient = require("mongodb").MongoClient;
-// var url = "mongodb+srv://harshil:harshil@123@cluster0.stbbj.mongodb.net/?retryWrites=true&w=majority";
-var url =
-  "mongodb+srv://pinkypromisedev:pinkypromise123@@pinkypromise-dev.1yain.mongodb.net";
-
+// var MongoClient = require("mongodb").MongoClient;
+var Database = require("../Database/dbaccess");
 async function getDiagnosis(req, res) {
   try {
+console.log(req.body);
+    // Testing
+    // let result = await Database.GetDbAccess({"collection":"diagnosis", query: { MsgId: 1, TID:3 }});
+    // console.log(result)
+    // res.send(result);
+
     // res.send({status:200,message:"success"});
     let { MsgId, TID, SelectedOptions } = req.body;
     MsgId = parseInt(MsgId);
@@ -63,19 +66,17 @@ async function getDiagnosis(req, res) {
             selectedDiagnosis = 22;
           }
         }
-        console.log(selectedDiagnosis, TID);
+        // console.log(selectedDiagnosis, TID);
         try {
-          MongoClient.connect(url, function (err, db) {
-            if (err) throw err;
-            const dbo = db.db("ChatBoat");
-            dbo
-              .collection("diagnosis")
-              .findOne(
-                { MsgId: selectedDiagnosis, TID },
-                function (err, result) {
-                  if (err) throw err;
-                  console.log(result);
-                  db.close();
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+            // const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query: { MsgId: selectedDiagnosis, TID }});
+            // console.log(result)
+            // db.db("ChatBoat").collection("diagnosis").findOne({ MsgId: selectedDiagnosis, TID },function (err, result) {
+            //       if (err) throw err;
+                  // console.log(result);
+                  // db.close();
                   result = {
                     ...result,
                     count: `You answered yes to ${filteredAnswers.length} factors that are commonly associated with infertility.`,
@@ -89,24 +90,23 @@ async function getDiagnosis(req, res) {
                     }
                     res.send({ status: 200, message: "success", data: result });
                   } else res.send({ status: 404, message: "Data Not Found" });
-                }
-              );
-          });
+              //   }
+              // );
+          // });
         } catch (error) {
           res.send({ status: 400, message: error.message });
         }
         return;
       } else {
         try {
-          MongoClient.connect(url, function (err, db) {
-            if (err) throw err;
-            const dbo = db.db("ChatBoat");
-            dbo
-              .collection("diagnosis")
-              .findOne({ MsgId, TID }, function (err, result) {
-                if (err) throw err;
-                console.log(result);
-                db.close();
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+            // const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query: { MsgId, TID }});
+            // dbo.collection("diagnosis").findOne({ MsgId, TID }, function (err, result) {
+            //     if (err) throw err;
+                // console.log(result);
+                // db.close();
                 if (result) {
                   if (result.RefType === "Diagnostic Result") {
                     result.RefType = "diagnosis";
@@ -118,8 +118,8 @@ async function getDiagnosis(req, res) {
                 } else {
                   res.send({ status: 404, message: "Data Not Found" });
                 }
-              });
-          });
+              // });
+          // });
         } catch (error) {
           res.send({ status: 400, message: error.message });
         }
@@ -127,10 +127,10 @@ async function getDiagnosis(req, res) {
       }
     }
     if (TID == 5) {
-      console.log(SelectedOptions)
+      // console.log(SelectedOptions)
       const answers = SelectedOptions.map((answer) => answer.ID);
       let selectedDiagnosis;
-      console.log(answers.length);
+      // console.log(answers.length);
       if (answers.length == 7) {
         if (
           answers[0] == 2 &&
@@ -195,7 +195,7 @@ async function getDiagnosis(req, res) {
       } else if (answers.length == 10) {
         const copyAnswers = [...answers];
         const truncatedArr = copyAnswers.splice(5, 3);
-        console.log("-=-=", truncatedArr, copyAnswers);
+        // console.log("-=-=", truncatedArr, copyAnswers);
         if (
           copyAnswers[0] == 2 &&
           copyAnswers[1] == 2 &&
@@ -274,19 +274,20 @@ async function getDiagnosis(req, res) {
 
         }
       } else {
-        console.log("else");
+        // console.log("else");
         const { RefType } = req.body;
         if (RefType == "Diagnostic Result") {
           try {
-            MongoClient.connect(url, function (err, db) {
-              if (err) throw err;
-              const dbo = db.db("ChatBoat");
-              dbo
-                .collection("diagnosis2")
-                .findOne({ ID: MsgId, TID }, function (err, result) {
-                  if (err) throw err;
-                  console.log(result);
-                  db.close();
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+              // const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: MsgId, TID }});
+              // dbo
+              //   .collection("diagnosis2")
+              //   .findOne({ ID: MsgId, TID }, function (err, result) {
+              //     if (err) throw err;
+              //     console.log(result);
+                  // db.close();
                   if (result) {
                     if (result.RefType === "Diagnostic Result") {
                       result.RefType = "diagnosis";
@@ -296,23 +297,24 @@ async function getDiagnosis(req, res) {
                     }
                     res.send({ status: 200, message: "success", data: [result] });
                   } else res.send({ status: 404, message: "Data Not Found" });
-                });
-            });
+                // });
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
           return;
         }
         try {
-          MongoClient.connect(url, function (err, db) {
-            if (err) throw err;
-            const dbo = db.db("ChatBoat");
-            dbo
-              .collection("diagnosis")
-              .findOne({ MsgId, TID }, function (err, result) {
-                if (err) throw err;
-                console.log(result);
-                db.close();
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId, TID }});
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne({ MsgId, TID }, function (err, result) {
+            //     if (err) throw err;
+            //     console.log(result);
+                // db.close();
                 if (result) {
                   if (result.RefType === "Diagnostic Result") {
                     result.RefType = "diagnosis";
@@ -322,8 +324,8 @@ async function getDiagnosis(req, res) {
                   }
                   res.send({ status: 200, message: "success", data: result });
                 } else res.send({ status: 404, message: "Data Not Found" });
-              });
-          });
+              // });
+          // });
         } catch (error) {
           res.send({ status: 400, message: error.message });
         }
@@ -331,16 +333,17 @@ async function getDiagnosis(req, res) {
       }
       console.log("---------------------", selectedDiagnosis, TID);
       try {
-        MongoClient.connect(url, function (err, db) {
-          if (err) throw err;
-          const dbo = db.db("ChatBoat");
-          dbo
-            .collection("diagnosis")
-            .findOne({ MsgId: selectedDiagnosis, TID }, function (err, result) {
-              if (err) throw err;
-              console.log(result);
-              db.close();
-              console.log(answers.length);
+        // MongoClient.connect(url, function (err, db) {
+        //   if (err) throw err;
+        //   const dbo = db.db("ChatBoat");
+        let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+          // dbo
+          //   .collection("diagnosis")
+          //   .findOne({ MsgId: selectedDiagnosis, TID }, function (err, result) {
+          //     if (err) throw err;
+          //     console.log(result);
+          //     // db.close();
+          //     console.log(answers.length);
               if (
                 result &&
                 (answers.length == 10) & (answers[5] == 1) &&
@@ -377,8 +380,8 @@ async function getDiagnosis(req, res) {
                 }
                 res.send({ status: 200, message: "success", data: result });
               } else res.send({ status: 404, message: "Data Not Found" });
-            });
-        });
+            // });
+        // });
       } catch (error) {
         res.send({ status: 400, message: error.message });
       }
@@ -512,18 +515,19 @@ async function getDiagnosis(req, res) {
             console.log(diagnosis, selectedDiagnosis);
             if (diagnosis == true) {
               try {
-                MongoClient.connect(url, function (err, db) {
-                  if (err) throw err;
-                  const dbo = db.db("ChatBoat");
-                  dbo
-                    .collection("diagnosis2")
-                    .findOne(
-                      { ID: selectedDiagnosis, TID },
-                      function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        db.close();
-                        console.log(answers.length);
+                // MongoClient.connect(url, function (err, db) {
+                //   if (err) throw err;
+                //   const dbo = db.db("ChatBoat");
+                let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                  // dbo
+                  //   .collection("diagnosis2")
+                  //   .findOne(
+                  //     { ID: selectedDiagnosis, TID },
+                  //     function (err, result) {
+                  //       if (err) throw err;
+                  //       console.log(result);
+                  //       // db.close();
+                  //       console.log(answers.length);
                         if (result) {
                           if (result.RefType === "Diagnostic Result") {
                             result.RefType = "diagnosis";
@@ -541,24 +545,25 @@ async function getDiagnosis(req, res) {
                           });
                         } else
                           res.send({ status: 404, message: "Data Not Found" });
-                      }
-                    );
-                });
+                      // }
+                    // );
+                // });
               } catch (error) {
                 res.send({ status: 400, message: error.message });
               }
             } else {
               try {
-                MongoClient.connect(url, function (err, db) {
-                  if (err) throw err;
-                  const dbo = db.db("ChatBoat");
-                  dbo
-                    .collection("diagnosis")
-                    .findOne({ MsgId: 2, TID }, function (err, result) {
-                      if (err) throw err;
-                      console.log(result);
-                      db.close();
-                      console.log(answers.length);
+                // MongoClient.connect(url, function (err, db) {
+                //   if (err) throw err;
+                //   const dbo = db.db("ChatBoat");
+                let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 2, TID }});
+                  // dbo
+                  //   .collection("diagnosis")
+                  //   .findOne({ MsgId: 2, TID }, function (err, result) {
+                  //     if (err) throw err;
+                  //     console.log(result);
+                  //     // db.close();
+                  //     console.log(answers.length);
                       if (result) {
                         if (result.RefType === "Diagnostic Result") {
                           result.RefType = "diagnosis";
@@ -575,8 +580,8 @@ async function getDiagnosis(req, res) {
                           data: result,
                         });
                       } else res.send({ status: 404, message: "Data Not Found" });
-                    });
-                });
+                    // });
+                // });
               } catch (error) {
                 res.send({ status: 400, message: error.message });
               }
@@ -686,18 +691,19 @@ async function getDiagnosis(req, res) {
 
             if (diagnosis == true) {
               try {
-                MongoClient.connect(url, function (err, db) {
-                  if (err) throw err;
-                  const dbo = db.db("ChatBoat");
-                  dbo
-                    .collection("diagnosis2")
-                    .findOne(
-                      { ID: selectedDiagnosis, TID },
-                      function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        db.close();
-                        console.log(answers.length);
+                // MongoClient.connect(url, function (err, db) {
+                //   if (err) throw err;
+                //   const dbo = db.db("ChatBoat");
+                let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                  // dbo
+                  //   .collection("diagnosis2")
+                  //   .findOne(
+                  //     { ID: selectedDiagnosis, TID },
+                  //     function (err, result) {
+                  //       if (err) throw err;
+                  //       console.log(result);
+                  //       // db.close();
+                  //       console.log(answers.length);
                         if (result) {
                           if (result.RefType === "Diagnostic Result") {
                             result.RefType = "diagnosis";
@@ -715,24 +721,25 @@ async function getDiagnosis(req, res) {
                           });
                         } else
                           res.send({ status: 404, message: "Data Not Found" });
-                      }
-                    );
-                });
+                    //   }
+                    // );
+                // });
               } catch (error) {
                 res.send({ status: 400, message: error.message });
               }
             } else {
               try {
-                MongoClient.connect(url, function (err, db) {
-                  if (err) throw err;
-                  const dbo = db.db("ChatBoat");
-                  dbo
-                    .collection("diagnosis")
-                    .findOne({ MsgId: 2, TID }, function (err, result) {
-                      if (err) throw err;
-                      console.log(result);
-                      db.close();
-                      console.log(answers.length);
+                // MongoClient.connect(url, function (err, db) {
+                //   if (err) throw err;
+                //   const dbo = db.db("ChatBoat");
+                let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 2, TID }});
+                  // dbo
+                  //   .collection("diagnosis")
+                  //   .findOne({ MsgId: 2, TID }, function (err, result) {
+                  //     if (err) throw err;
+                  //     console.log(result);
+                  //     // db.close();
+                  //     console.log(answers.length);
                       if (result) {
                         if (result.RefType === "Diagnostic Result") {
                           result.RefType = "diagnosis";
@@ -749,8 +756,8 @@ async function getDiagnosis(req, res) {
                           data: result,
                         });
                       } else res.send({ status: 404, message: "Data Not Found" });
-                    });
-                });
+                    // });
+                // });
               } catch (error) {
                 res.send({ status: 400, message: error.message });
               }
@@ -835,18 +842,19 @@ async function getDiagnosis(req, res) {
 
           if (diagnosis == true) {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis2")
-                  .findOne(
-                    { ID: selectedDiagnosis, TID },
-                    function (err, result) {
-                      if (err) throw err;
-                      console.log(result);
-                      db.close();
-                      console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                // dbo
+                //   .collection("diagnosis2")
+                //   .findOne(
+                //     { ID: selectedDiagnosis, TID },
+                //     function (err, result) {
+                //       if (err) throw err;
+                //       console.log(result);
+                //       // db.close();
+                //       console.log(answers.length);
                       if (result) {
                         if (result.RefType === "Diagnostic Result") {
                           result.RefType = "diagnosis";
@@ -864,24 +872,25 @@ async function getDiagnosis(req, res) {
                         });
                       } else
                         res.send({ status: 404, message: "Data Not Found" });
-                    }
-                  );
-              });
+                    // }
+                  // );
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
           } else {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis")
-                  .findOne({ MsgId: 2, TID }, function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 2, TID }});
+                // dbo
+                //   .collection("diagnosis")
+                //   .findOne({ MsgId: 2, TID }, function (err, result) {
+                //     if (err) throw err;
+                //     console.log(result);
+                //     // db.close();
+                //     console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -895,8 +904,8 @@ async function getDiagnosis(req, res) {
                         data: result,
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  });
-              });
+                  // });
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
@@ -978,18 +987,19 @@ async function getDiagnosis(req, res) {
           }
           if (diagnosis == true) {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis2")
-                  .findOne(
-                    { ID: selectedDiagnosis, TID },
-                    function (err, result) {
-                      if (err) throw err;
-                      console.log(result);
-                      db.close();
-                      console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                // dbo
+                //   .collection("diagnosis2")
+                //   .findOne(
+                //     { ID: selectedDiagnosis, TID },
+                //     function (err, result) {
+                //       if (err) throw err;
+                //       console.log(result);
+                //       // db.close();
+                //       console.log(answers.length);
                       if (result) {
                         if (result.RefType === "Diagnostic Result") {
                           result.RefType = "diagnosis";
@@ -1007,24 +1017,25 @@ async function getDiagnosis(req, res) {
                         });
                       } else
                         res.send({ status: 404, message: "Data Not Found" });
-                    }
-                  );
-              });
+                    // }
+                  // );
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
           } else {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis")
-                  .findOne({ MsgId: 2, TID }, function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 2, TID }});
+                // dbo
+                //   .collection("diagnosis")
+                //   .findOne({ MsgId: 2, TID }, function (err, result) {
+                //     if (err) throw err;
+                //     console.log(result);
+                //     // db.close();
+                //     console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -1038,8 +1049,8 @@ async function getDiagnosis(req, res) {
                         data: result,
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  });
-              });
+                  // });
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
@@ -1217,18 +1228,19 @@ async function getDiagnosis(req, res) {
 
           if (diagnosis == true) {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis2")
-                  .findOne(
-                    { ID: selectedDiagnosis, TID },
-                    function (err, result) {
-                      if (err) throw err;
-                      console.log(result);
-                      db.close();
-                      console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                // dbo
+                //   .collection("diagnosis2")
+                //   .findOne(
+                //     { ID: selectedDiagnosis, TID },
+                //     function (err, result) {
+                //       if (err) throw err;
+                //       console.log(result);
+                //       // db.close();
+                //       console.log(answers.length);
                       if (result) {
                         if (result.RefType === "Diagnostic Result") {
                           result.RefType = "diagnosis";
@@ -1246,24 +1258,25 @@ async function getDiagnosis(req, res) {
                         });
                       } else
                         res.send({ status: 404, message: "Data Not Found" });
-                    }
-                  );
-              });
+                  //   }
+                  // );
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
           } else {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis")
-                  .findOne({ MsgId: 2, TID }, function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 2, TID }});
+                // dbo
+                //   .collection("diagnosis")
+                //   .findOne({ MsgId: 2, TID }, function (err, result) {
+                //     if (err) throw err;
+                //     console.log(result);
+                //     // db.close();
+                //     console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -1277,8 +1290,8 @@ async function getDiagnosis(req, res) {
                         data: result,
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  });
-              });
+                  // });
+              // });
               return;
             } catch (error) {
               res.send({ status: 400, message: error.message });
@@ -1287,15 +1300,16 @@ async function getDiagnosis(req, res) {
         }
       } else {
         try {
-          MongoClient.connect(url, function (err, db) {
-            if (err) throw err;
-            const dbo = db.db("ChatBoat");
-            dbo
-              .collection("diagnosis")
-              .findOne({ MsgId, TID }, function (err, result) {
-                if (err) throw err;
-                console.log(result);
-                db.close();
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId, TID }});
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne({ MsgId, TID }, function (err, result) {
+            //     if (err) throw err;
+            //     console.log(result);
+                // db.close();
                 if (result) {
                   if (result.RefType === "Diagnostic Result") {
                     result.RefType = "diagnosis";
@@ -1305,8 +1319,8 @@ async function getDiagnosis(req, res) {
                   }
                   res.send({ status: 200, message: "success", data: result });
                 } else res.send({ status: 404, message: "Data Not Found" });
-              });
-          });
+              // });
+          // });
           return;
         } catch (error) {
           res.send({ status: 400, message: error.message });
@@ -1318,15 +1332,16 @@ async function getDiagnosis(req, res) {
       if (RefType == "Diagnostic Result") {
         console.log("DIAGNOSIS 2");
         try {
-          MongoClient.connect(url, function (err, db) {
-            if (err) throw err;
-            const dbo = db.db("ChatBoat");
-            dbo
-              .collection("diagnosis2")
-              .findOne({ ID: MsgId, TID }, function (err, result) {
-                if (err) throw err;
-                console.log(result);
-                db.close();
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: MsgId, TID }});
+            // dbo
+            //   .collection("diagnosis2")
+            //   .findOne({ ID: MsgId, TID }, function (err, result) {
+            //     if (err) throw err;
+            //     console.log(result);
+                // db.close();
                 if (result) {
                   if (result.RefType === "Diagnostic Result") {
                     result.RefType = "diagnosis";
@@ -1337,8 +1352,8 @@ async function getDiagnosis(req, res) {
                   res.send({ status: 200, message: "success", data: [result] });
                 } else res.send({ status: 404, message: "Data Not Found" });
                 return;
-              });
-          });
+              // });
+          // });
         } catch (error) {
           res.send({ status: 400, message: error.message });
         }
@@ -1363,16 +1378,17 @@ async function getDiagnosis(req, res) {
                 SelectedOptions[4].ID == 1
               ) {
                 try {
-                  MongoClient.connect(url, function (err, db) {
-                    if (err) throw err;
-                    const dbo = db.db("ChatBoat");
-                    dbo
-                      .collection("diagnosis")
-                      .findOne({ MsgId: 3, TID }, function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        db.close();
-                        console.log(answers.length);
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
+                  let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 3, TID }});
+                    // dbo
+                    //   .collection("diagnosis")
+                    //   .findOne({ MsgId: 3, TID }, function (err, result) {
+                    //     if (err) throw err;
+                    //     console.log(result);
+                    //     // db.close();
+                    //     console.log(answers.length);
                         if (result) {
                           if (result.RefType === "Diagnostic Result") {
                             result.RefType = "diagnosis";
@@ -1389,8 +1405,8 @@ async function getDiagnosis(req, res) {
                             data: result,
                           });
                         } else res.send({ status: 404, message: "Data Not Found" });
-                      });
-                  });
+                      // });
+                  // });
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
@@ -1402,16 +1418,17 @@ async function getDiagnosis(req, res) {
               ) {
                 //TAKE TO PCOS
                 try {
-                  MongoClient.connect(url, function (err, db) {
-                    if (err) throw err;
-                    const dbo = db.db("ChatBoat");
-                    dbo
-                      .collection("questions")
-                      .findOne({ QID: 6, TID }, function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        db.close();
-                        console.log(answers.length);
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
+                  let result = await Database.GetDbAccess({"collection":"questions", query:{ QID: 6, TID }});
+                    // dbo
+                    //   .collection("questions")
+                    //   .findOne({ QID: 6, TID }, function (err, result) {
+                    //     if (err) throw err;
+                    //     console.log(result);
+                    //     // db.close();
+                    //     console.log(answers.length);
                         if (result) {
                           if (result.RefType === "Diagnostic Result") {
                             result.RefType = "diagnosis";
@@ -1428,8 +1445,8 @@ async function getDiagnosis(req, res) {
                             data: result,
                           });
                         } else res.send({ status: 404, message: "Data Not Found" });
-                      });
-                  });
+                      // });
+                  // });
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
@@ -1487,18 +1504,19 @@ async function getDiagnosis(req, res) {
               count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
               try {
-                MongoClient.connect(url, function (err, db) {
-                  if (err) throw err;
-                  const dbo = db.db("ChatBoat");
-                  dbo
-                    .collection("diagnosis")
-                    .findOne(
-                      { MsgId: selectedDiagnosis, TID },
-                      function (err, result) {
-                        if (err) throw err;
-                        console.log(result);
-                        db.close();
-                        console.log(answers.length);
+                // MongoClient.connect(url, function (err, db) {
+                //   if (err) throw err;
+                //   const dbo = db.db("ChatBoat");
+                let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+                  // dbo
+                  //   .collection("diagnosis")
+                  //   .findOne(
+                  //     { MsgId: selectedDiagnosis, TID },
+                  //     function (err, result) {
+                  //       if (err) throw err;
+                  //       console.log(result);
+                  //       // db.close();
+                  //       console.log(answers.length);
                         if (result) {
                           if (result.RefType === "Diagnostic Result") {
                             result.RefType = "diagnosis";
@@ -1516,9 +1534,9 @@ async function getDiagnosis(req, res) {
                           });
                         } else
                           res.send({ status: 404, message: "Data Not Found" });
-                      }
-                    );
-                });
+                    //   }
+                    // );
+                // });
               } catch (error) {
                 res.send({ status: 400, message: error.message });
               }
@@ -1542,17 +1560,18 @@ async function getDiagnosis(req, res) {
                     questionId = 19;
 
                     try {
-                      MongoClient.connect(url, function (err, db) {
-                        if (err) throw err;
-                        const dbo = db.db("ChatBoat");
-                        dbo
-                          .collection("diagnosis")
-                          .findOne(
-                            { MsgId: questionId, TID },
-                            function (err, result) {
-                              if (err) throw err;
-                              console.log(result);
-                              db.close();
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: questionId, TID }});
+                        // dbo
+                        //   .collection("diagnosis")
+                        //   .findOne(
+                        //     { MsgId: questionId, TID },
+                        //     function (err, result) {
+                        //       if (err) throw err;
+                        //       console.log(result);
+                        //       // db.close();
                               if (result) {
                                 if (result.RefType === "Diagnostic Result") {
                                   result.RefType = "diagnosis";
@@ -1573,9 +1592,9 @@ async function getDiagnosis(req, res) {
                                   status: 404,
                                   message: "Data Not Found",
                                 });
-                            }
-                          );
-                      });
+                          //   }
+                          // );
+                      // });
                     } catch (error) {
                       res.send({ status: 400, message: error.message });
                     }
@@ -1583,17 +1602,18 @@ async function getDiagnosis(req, res) {
                   }
 
                   try {
-                    MongoClient.connect(url, function (err, db) {
-                      if (err) throw err;
-                      const dbo = db.db("ChatBoat");
-                      dbo
-                        .collection("questions")
-                        .findOne(
-                          { QID: questionId, TID },
-                          function (err, result) {
-                            if (err) throw err;
-                            console.log(result);
-                            db.close();
+                    // MongoClient.connect(url, function (err, db) {
+                    //   if (err) throw err;
+                    //   const dbo = db.db("ChatBoat");
+                    let result = await Database.GetDbAccess({"collection":"questions", query:{ QID: questionId, TID }});
+                      // dbo
+                      //   .collection("questions")
+                      //   .findOne(
+                      //     { QID: questionId, TID },
+                      //     function (err, result) {
+                      //       if (err) throw err;
+                      //       console.log(result);
+                      //       // db.close();
                             if (result) {
                               if (result.RefType === "Diagnostic Result") {
                                 result.RefType = "diagnosis";
@@ -1614,9 +1634,9 @@ async function getDiagnosis(req, res) {
                                 status: 404,
                                 message: "Data Not Found",
                               });
-                          }
-                        );
-                    });
+                        //   }
+                        // );
+                    // });
                   } catch (error) {
                     res.send({ status: 400, message: error.message });
                   }
@@ -1633,17 +1653,18 @@ async function getDiagnosis(req, res) {
                 else questionId = 40;
 
                 try {
-                  MongoClient.connect(url, function (err, db) {
-                    if (err) throw err;
-                    const dbo = db.db("ChatBoat");
-                    dbo
-                      .collection("questions")
-                      .findOne(
-                        { QID: questionId, TID },
-                        function (err, result) {
-                          if (err) throw err;
-                          console.log(result);
-                          db.close();
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
+                  let result = await Database.GetDbAccess({"collection":"questions", query:{ QID: questionId, TID }});
+                    // dbo
+                    //   .collection("questions")
+                    //   .findOne(
+                    //     { QID: questionId, TID },
+                    //     function (err, result) {
+                    //       if (err) throw err;
+                    //       console.log(result);
+                    //       // db.close();
                           if (result) {
                             if (result.RefType === "Diagnostic Result") {
                               result.RefType = "diagnosis";
@@ -1664,9 +1685,9 @@ async function getDiagnosis(req, res) {
                               status: 404,
                               message: "Data Not Found",
                             });
-                        }
-                      );
-                  });
+                      //   }
+                      // );
+                  // });
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
@@ -1684,17 +1705,18 @@ async function getDiagnosis(req, res) {
                 }
 
                 try {
-                  MongoClient.connect(url, function (err, db) {
-                    if (err) throw err;
-                    const dbo = db.db("ChatBoat");
-                    dbo
-                      .collection("questions")
-                      .findOne(
-                        { QID: questionId, TID },
-                        function (err, result) {
-                          if (err) throw err;
-                          console.log(result);
-                          db.close();
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
+                  let result = await Database.GetDbAccess({"collection":"questions", query:{ QID: questionId, TID }});
+                    // dbo
+                    //   .collection("questions")
+                    //   .findOne(
+                    //     { QID: questionId, TID },
+                    //     function (err, result) {
+                    //       if (err) throw err;
+                    //       console.log(result);
+                    //       // db.close();
                           if (result) {
                             if (result.RefType === "Diagnostic Result") {
                               result.RefType = "diagnosis";
@@ -1715,9 +1737,9 @@ async function getDiagnosis(req, res) {
                               status: 404,
                               message: "Data Not Found",
                             });
-                        }
-                      );
-                  });
+                      //   }
+                      // );
+                  // });
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
@@ -1749,15 +1771,16 @@ async function getDiagnosis(req, res) {
                 //LOW
                 if (points < 3) {
                   try {
-                    MongoClient.connect(url, function (err, db) {
-                      if (err) throw err;
-                      const dbo = db.db("ChatBoat");
-                      dbo
-                        .collection("diagnosis")
-                        .findOne({ MsgId: 1, TID }, function (err, result) {
-                          if (err) throw err;
-                          console.log(result);
-                          db.close();
+                    // MongoClient.connect(url, function (err, db) {
+                    //   if (err) throw err;
+                    //   const dbo = db.db("ChatBoat");
+                    let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 1, TID }});
+                      // dbo
+                      //   .collection("diagnosis")
+                      //   .findOne({ MsgId: 1, TID }, function (err, result) {
+                      //     if (err) throw err;
+                      //     console.log(result);
+                      //     // db.close();
                           if (result) {
                             if (result.RefType === "Diagnostic Result") {
                               result.RefType = "diagnosis";
@@ -1778,8 +1801,8 @@ async function getDiagnosis(req, res) {
                               status: 404,
                               message: "Data Not Found",
                             });
-                        });
-                    });
+                        // });
+                    // });
                     return;
                   } catch (error) {
                     res.send({ status: 400, message: error.message });
@@ -1788,15 +1811,16 @@ async function getDiagnosis(req, res) {
                 //MEDIUM OR HIGH
                 else {
                   try {
-                    MongoClient.connect(url, function (err, db) {
-                      if (err) throw err;
-                      const dbo = db.db("ChatBoat");
-                      dbo
-                        .collection("questions")
-                        .findOne({ QID: 62, TID }, function (err, result) {
-                          if (err) throw err;
-                          console.log(result);
-                          db.close();
+                    // MongoClient.connect(url, function (err, db) {
+                    //   if (err) throw err;
+                    //   const dbo = db.db("ChatBoat");
+                    let result = await Database.GetDbAccess({"collection":"questions", query:{ QID: 62, TID }});
+                      // dbo
+                      //   .collection("questions")
+                      //   .findOne({ QID: 62, TID }, function (err, result) {
+                      //     if (err) throw err;
+                      //     console.log(result);
+                      //     // db.close();
                           if (result) {
                             if (result.RefType === "Diagnostic Result") {
                               result.RefType = "diagnosis";
@@ -1817,8 +1841,8 @@ async function getDiagnosis(req, res) {
                               status: 404,
                               message: "Data Not Found",
                             });
-                        });
-                    });
+                        // });
+                    // });
                     return;
                   } catch (error) {
                     res.send({ status: 400, message: error.message });
@@ -1974,17 +1998,18 @@ async function getDiagnosis(req, res) {
 
                   if (diagnosis) {
                     try {
-                      MongoClient.connect(url, function (err, db) {
-                        if (err) throw err;
-                        const dbo = db.db("ChatBoat");
-                        dbo
-                          .collection("diagnosis2")
-                          .findOne(
-                            { ID: selectedDiagnosis, TID },
-                            function (err, result) {
-                              if (err) throw err;
-                              console.log(result);
-                              db.close();
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                        // dbo
+                        //   .collection("diagnosis2")
+                        //   .findOne(
+                        //     { ID: selectedDiagnosis, TID },
+                        //     function (err, result) {
+                        //       if (err) throw err;
+                        //       console.log(result);
+                        //       // db.close();
                               if (result) {
                                 if (result.RefType === "Diagnostic Result") {
                                   result.RefType = "diagnosis";
@@ -2005,26 +2030,27 @@ async function getDiagnosis(req, res) {
                                   status: 404,
                                   message: "Data Not Found",
                                 });
-                            }
-                          );
-                      });
+                          //   }
+                          // );
+                      // });
                       return;
                     } catch (error) {
                       res.send({ status: 400, message: error.message });
                     }
                   } else {
                     try {
-                      MongoClient.connect(url, function (err, db) {
-                        if (err) throw err;
-                        const dbo = db.db("ChatBoat");
-                        dbo
-                          .collection("diagnosis")
-                          .findOne(
-                            { ID: selectedDiagnosis, TID },
-                            function (err, result) {
-                              if (err) throw err;
-                              console.log(result);
-                              db.close();
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ ID: selectedDiagnosis, TID }});
+                        // dbo
+                        //   .collection("diagnosis")
+                        //   .findOne(
+                        //     { ID: selectedDiagnosis, TID },
+                        //     function (err, result) {
+                        //       if (err) throw err;
+                        //       console.log(result);
+                        //       // db.close();
                               if (result) {
                                 if (result.RefType === "Diagnostic Result") {
                                   result.RefType = "diagnosis";
@@ -2045,9 +2071,9 @@ async function getDiagnosis(req, res) {
                                   status: 404,
                                   message: "Data Not Found",
                                 });
-                            }
-                          );
-                      });
+                          //   }
+                          // );
+                      // });
                       return;
                     } catch (error) {
                       res.send({ status: 400, message: error.message });
@@ -2199,17 +2225,18 @@ async function getDiagnosis(req, res) {
 
                   if (diagnosis) {
                     try {
-                      MongoClient.connect(url, function (err, db) {
-                        if (err) throw err;
-                        const dbo = db.db("ChatBoat");
-                        dbo
-                          .collection("diagnosis2")
-                          .findOne(
-                            { ID: selectedDiagnosis, TID },
-                            function (err, result) {
-                              if (err) throw err;
-                              console.log(result);
-                              db.close();
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({"collection":"diagnosis2", query:{ ID: selectedDiagnosis, TID }});
+                        // dbo
+                        //   .collection("diagnosis2")
+                        //   .findOne(
+                        //     { ID: selectedDiagnosis, TID },
+                        //     function (err, result) {
+                        //       if (err) throw err;
+                        //       console.log(result);
+                              // db.close();
                               if (result) {
                                 if (result.RefType === "Diagnostic Result") {
                                   result.RefType = "diagnosis";
@@ -2230,26 +2257,27 @@ async function getDiagnosis(req, res) {
                                   status: 404,
                                   message: "Data Not Found",
                                 });
-                            }
-                          );
-                      });
+                          //   }
+                          // );
+                      // });
                     } catch (error) {
                       res.send({ status: 400, message: error.message });
                     }
                     return;
                   } else {
                     try {
-                      MongoClient.connect(url, function (err, db) {
-                        if (err) throw err;
-                        const dbo = db.db("ChatBoat");
-                        dbo
-                          .collection("diagnosis")
-                          .findOne(
-                            { ID: selectedDiagnosis, TID },
-                            function (err, result) {
-                              if (err) throw err;
-                              console.log(result);
-                              db.close();
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ ID: selectedDiagnosis, TID }});
+                        // dbo
+                        //   .collection("diagnosis")
+                        //   .findOne(
+                        //     { ID: selectedDiagnosis, TID },
+                        //     function (err, result) {
+                        //       if (err) throw err;
+                        //       console.log(result);
+                        //       // db.close();
                               if (result) {
                                 if (result.RefType === "Diagnostic Result") {
                                   result.RefType = "diagnosis";
@@ -2270,9 +2298,9 @@ async function getDiagnosis(req, res) {
                                   status: 404,
                                   message: "Data Not Found",
                                 });
-                            }
-                          );
-                      });
+                          //   }
+                          // );
+                      // });
                       return;
                     } catch (error) {
                       res.send({ status: 400, message: error.message });
@@ -2309,15 +2337,16 @@ async function getDiagnosis(req, res) {
 
           if (points == 0) {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis")
-                  .findOne({ MsgId: 42, TID }, function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 42, TID }});
+                // dbo
+                //   .collection("diagnosis")
+                //   .findOne({ MsgId: 42, TID }, function (err, result) {
+                //     if (err) throw err;
+                //     console.log(result);
+                //     // db.close();
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2331,8 +2360,8 @@ async function getDiagnosis(req, res) {
                         data: result,
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  });
-              });
+                  // });
+              // });
               return;
             } catch (error) {
               res.send({ status: 400, message: error.message });
@@ -2340,15 +2369,16 @@ async function getDiagnosis(req, res) {
           }
           if (points == 1) {
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("diagnosis")
-                  .findOne({ MsgId: 43, TID }, function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: 43, TID }});
+                // dbo
+                //   .collection("diagnosis")
+                //   .findOne({ MsgId: 43, TID }, function (err, result) {
+                //     if (err) throw err;
+                //     console.log(result);
+                //     // db.close();
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2362,8 +2392,8 @@ async function getDiagnosis(req, res) {
                         data: result,
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  });
-              });
+                  // });
+              // });
               return;
             } catch (error) {
               res.send({ status: 400, message: error.message });
@@ -2487,18 +2517,19 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
-            MongoClient.connect(url, function (err, db) {
-              if (err) throw err;
-              const dbo = db.db("ChatBoat");
-              dbo
-                .collection("diagnosis")
-                .findOne(
-                  { MsgId: selectedDiagnosis, TID },
-                  function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2512,9 +2543,9 @@ async function getDiagnosis(req, res) {
                         data: { ...result, count },
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  }
-                );
-            });
+                //   }
+                // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2570,18 +2601,19 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
-            MongoClient.connect(url, function (err, db) {
-              if (err) throw err;
-              const dbo = db.db("ChatBoat");
-              dbo
-                .collection("diagnosis")
-                .findOne(
-                  { MsgId: selectedDiagnosis, TID },
-                  function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2595,9 +2627,9 @@ async function getDiagnosis(req, res) {
                         data: { ...result, count },
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  }
-                );
-            });
+                //   }
+                // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2624,18 +2656,19 @@ async function getDiagnosis(req, res) {
             status = "low";
             selectedDiagnosis = 105;
             try {
-              MongoClient.connect(url, function (err, db) {
-                if (err) throw err;
-                const dbo = db.db("ChatBoat");
-                dbo
-                  .collection("questions")
-                  .findOne(
-                    { QID: selectedDiagnosis, TID },
-                    function (err, result) {
-                      if (err) throw err;
-                      console.log(result);
-                      db.close();
-                      console.log(answers.length);
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({"collection":"questions", query:{ QID: selectedDiagnosis, TID }});
+                // dbo
+                //   .collection("questions")
+                //   .findOne(
+                //     { QID: selectedDiagnosis, TID },
+                //     function (err, result) {
+                //       if (err) throw err;
+                //       console.log(result);
+                //       // db.close();
+                //       console.log(answers.length);
                       if (result) {
                         if (result.RefType === "Diagnostic Result") {
                           result.RefType = "diagnosis";
@@ -2653,9 +2686,9 @@ async function getDiagnosis(req, res) {
                         });
                       } else
                         res.send({ status: 404, message: "Data Not Found" });
-                    }
-                  );
-              });
+                  //   }
+                  // );
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
@@ -2689,18 +2722,19 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
-            MongoClient.connect(url, function (err, db) {
-              if (err) throw err;
-              const dbo = db.db("ChatBoat");
-              dbo
-                .collection("diagnosis")
-                .findOne(
-                  { MsgId: selectedDiagnosis, TID },
-                  function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2714,9 +2748,9 @@ async function getDiagnosis(req, res) {
                         data: { ...result, count },
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  }
-                );
-            });
+                //   }
+                // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2779,18 +2813,19 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
-            MongoClient.connect(url, function (err, db) {
-              if (err) throw err;
-              const dbo = db.db("ChatBoat");
-              dbo
-                .collection("diagnosis")
-                .findOne(
-                  { MsgId: selectedDiagnosis, TID },
-                  function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2804,9 +2839,9 @@ async function getDiagnosis(req, res) {
                         data: { ...result, result },
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  }
-                );
-            });
+                //   }
+                // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2856,18 +2891,19 @@ async function getDiagnosis(req, res) {
           }
 
           try {
-            MongoClient.connect(url, function (err, db) {
-              if (err) throw err;
-              const dbo = db.db("ChatBoat");
-              dbo
-                .collection("diagnosis")
-                .findOne(
-                  { MsgId: selectedDiagnosis, TID },
-                  function (err, result) {
-                    if (err) throw err;
-                    console.log(result);
-                    db.close();
-                    console.log(answers.length);
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
+            let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId: selectedDiagnosis, TID }});
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2881,9 +2917,9 @@ async function getDiagnosis(req, res) {
                         data: result,
                       });
                     } else res.send({ status: 404, message: "Data Not Found" });
-                  }
-                );
-            });
+                //   }
+                // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2892,15 +2928,16 @@ async function getDiagnosis(req, res) {
         // ----------------------------------------------------------
       } else {
         try {
-          MongoClient.connect(url, function (err, db) {
-            if (err) throw err;
-            const dbo = db.db("ChatBoat");
-            dbo
-              .collection("diagnosis")
-              .findOne({ MsgId, TID }, function (err, result) {
-                if (err) throw err;
-                console.log(result);
-                db.close();
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({"collection":"diagnosis", query:{ MsgId, TID }});
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne({ MsgId, TID }, function (err, result) {
+            //     if (err) throw err;
+            //     console.log(result);
+            //     // db.close();
                 if (result) {
                   if (result.RefType === "Diagnostic Result") {
                     result.RefType = "diagnosis";
@@ -2910,8 +2947,8 @@ async function getDiagnosis(req, res) {
                   }
                   res.send({ status: 200, message: "success", data: result });
                 } else res.send({ status: 404, message: "Data Not Found" });
-              });
-          });
+              // });
+          // });
         } catch (error) {
           res.send({ status: 400, message: error.message });
         }

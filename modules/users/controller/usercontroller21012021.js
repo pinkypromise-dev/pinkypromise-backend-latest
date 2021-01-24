@@ -399,11 +399,7 @@ const createaccount = (req, res) => {
     // console.log("success from create account")
     // return({status:200,message:"success from create account"})
     const languageCode = req.query.languageCode || 'en';
-    let userid = req.body.userid
-    if(req.user !== undefined){
-        userid = req.user._id
-    }
-
+    const userid = req.user._id || req.body.userid
     let flag = Validator(req.body, ['username', 'height', 'weight', 'gender', 'healthissue', 'dob'])
     if (flag)
         return responses.sendError(res, languageCode, {}, flag[1], flag[0])

@@ -3,8 +3,8 @@ var Database = require("../Database/dbaccess");
 var ObjectId = require("mongodb").ObjectID;
 async function getDiagnosis(req, res) {
   try {
-    // console.log(req.body);
-    // Testing d-5
+    console.log(req.body);
+    // Testing
     // let result = await Database.GetDbAccess({"collection":"diagnosis", query: { MsgId: 1, TID:3 }});
     // console.log(result)
     // res.send(result);
@@ -45,14 +45,15 @@ async function getDiagnosis(req, res) {
     MsgId = parseInt(MsgId);
     TID = parseInt(TID);
     let age = calcAge(user.dob);
-    console.log("USER", age, bmi);
+    console.log("USER", age);
     // console.log(SelectedOptions);
     if (TID == 3) {
       if (SelectedOptions.length == 10) {
         const answers = SelectedOptions.map((elem) => elem.ID);
         const filteredAnswers = answers.filter((answer) => answer == 1);
         let selectedDiagnosis;
-        if (filteredAnswers.length == 0) selectedDiagnosis = 41;
+        if(filteredAnswers.length == 0)
+        selectedDiagnosis = 41;
         // console.log(selectedDiagnosis);
         if (age > 35) {
           const checkNone = answers.find((elem) => elem == 1);
@@ -406,7 +407,6 @@ async function getDiagnosis(req, res) {
       let selectedDiagnosis;
       // console.log(answers.length);
       if (answers.length == 7) {
-        console.log("7");
         if (
           answers[0] == 2 &&
           answers[1] == 2 &&
@@ -422,7 +422,8 @@ async function getDiagnosis(req, res) {
           answers[1] == 2 &&
           answers[2] == 2 &&
           answers[4] == 3 &&
-          answers[6] == 2
+          answers[6] == 2 &&
+          !selectedDiagnosis
         )
           selectedDiagnosis = 1;
         else if (
@@ -437,12 +438,25 @@ async function getDiagnosis(req, res) {
         else if (
           (answers[1] == 1 || answers[2] == 1) &&
           answers[3] == 1 &&
-          (answers[4] != 2 || answers[5] == 1)
+          answers[4] == 1 &&
+          answers[5] == 1
         )
           selectedDiagnosis = 10;
-        else if (answers[1] == 1 && answers[3] == 2 && answers[4] == 1)
+        else if (
+          (answers[1] == 1 || answers[2] == 1) &&
+          answers[3] == 1 &&
+          answers[4] == 1
+        )
+          selectedDiagnosis = 10;
+        else if (
+          answers[1] == 1 &&
+          answers[3] == 2 &&
+          answers[4] == 1 &&
+          !selectedDiagnosis
+        )
           selectedDiagnosis = 15;
-        else if (answers[3] == 2 && answers[4] == 1) selectedDiagnosis = 15;
+        else if (answers[3] == 2 && answers[4] == 1 && !selectedDiagnosis)
+          selectedDiagnosis = 15;
       } else if (answers.length == 10) {
         const copyAnswers = [...answers];
         const truncatedArr = copyAnswers.splice(5, 3);
@@ -488,16 +502,28 @@ async function getDiagnosis(req, res) {
         } else if (
           (copyAnswers[1] == 1 || copyAnswers[2] == 1) &&
           copyAnswers[3] == 1 &&
-          (copyAnswers[4] != 2 || copyAnswers[5] == 1)
+          copyAnswers[4] == 1 &&
+          copyAnswers[5] == 1
+        )
+          selectedDiagnosis = 10;
+        else if (
+          (copyAnswers[1] == 1 || copyAnswers[2] == 1) &&
+          copyAnswers[3] == 1 &&
+          copyAnswers[4] == 1
         )
           selectedDiagnosis = 10;
         else if (
           copyAnswers[1] == 1 &&
           copyAnswers[3] == 2 &&
-          copyAnswers[4] == 1
+          copyAnswers[4] == 1 &&
+          !selectedDiagnosis
         )
           selectedDiagnosis = 15;
-        else if (copyAnswers[3] == 2 && copyAnswers[4] == 1) {
+        else if (
+          copyAnswers[3] == 2 &&
+          copyAnswers[4] == 1 &&
+          !selectedDiagnosis
+        ) {
           if (answers[5] == 1 && answers[6] == 1 && answers[7] == 1) {
             selectedDiagnosis = 23;
           }
@@ -1429,38 +1455,12 @@ async function getDiagnosis(req, res) {
       if (RefType == "Diagnostic Result") {
         console.log("DIAGNOSIS 2");
         try {
-          let result = await Database.GetDbAccess({
-            collection: "diagnosis2",
-            query: { ID: MsgId, TID },
-          });
-          if (result) {
-            if (result.RefType === "Diagnostic Result") {
-              result.RefType = "diagnosis";
-            }
-            if (result.RefType === "" && result.diagnosis2 === true) {
-              result.RefType = "Diagnostic Result";
-            }
-            res.send({ status: 200, message: "success", data: [result] });
-          } else res.send({ status: 404, message: "Data Not Found" });
-          return;
-        } catch (error) {
-          res.send({ status: 400, message: error.message });
-        }
-        return;
-      }
-      if (
-        req.body.MsgId !== "-1" &&
-        req.body.MsgId !== "" &&
-        req.body.MsgId !== null &&
-        req.body.MsgId !== undefined
-      ) {
-        try {
           // MongoClient.connect(url, function (err, db) {
           //   if (err) throw err;
           //   const dbo = db.db("ChatBoat");
           let result = await Database.GetDbAccess({
-            collection: "diagnosis",
-            query: { MsgId, TID },
+            collection: "diagnosis2",
+            query: { ID: MsgId, TID },
           });
           // dbo
           //   .collection("diagnosis2")
@@ -1475,7 +1475,7 @@ async function getDiagnosis(req, res) {
             if (result.RefType === "" && result.diagnosis2 === true) {
               result.RefType = "Diagnostic Result";
             }
-            res.send({ status: 200, message: "success", data: result });
+            res.send({ status: 200, message: "success", data: [result] });
           } else res.send({ status: 404, message: "Data Not Found" });
           return;
           // });
@@ -1483,6 +1483,7 @@ async function getDiagnosis(req, res) {
         } catch (error) {
           res.send({ status: 400, message: error.message });
         }
+        return;
       }
       if (SelectedOptions.length > 0) {
         let selectedDiagnosis,
@@ -1504,10 +1505,20 @@ async function getDiagnosis(req, res) {
               ) {
                 try {
                   console.log("here");
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
                   let result = await Database.GetDbAccess({
                     collection: "diagnosis",
                     query: { MsgId: 3, TID },
                   });
+                  // dbo
+                  //   .collection("diagnosis")
+                  //   .findOne({ MsgId: 3, TID }, function (err, result) {
+                  //     if (err) throw err;
+                  //     console.log(result);
+                  //     // db.close();
+                  //     console.log(answers.length);
                   if (result) {
                     if (result.RefType === "Diagnostic Result") {
                       result.RefType = "diagnosis";
@@ -1522,22 +1533,27 @@ async function getDiagnosis(req, res) {
                     });
                     return;
                   } else res.send({ status: 404, message: "Data Not Found" });
+                  // });
+                  // });
                   return;
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
               }
-              //if not genetic; or if days > 7 and Y to Genetic
+              //Of not genetic; or if days > 7 and Y to Genetic
               if (
                 (SelectedOptions[3].QID == 4 && SelectedOptions[3].ID > 7) ||
                 (SelectedOptions[4].QID == 5 && SelectedOptions[4].ID == 2)
               ) {
                 //TAKE TO PCOS
-                console.log("1");
+                console.log('1');
                 try {
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
                   let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: 45, TID },
+                    collection: "questions",
+                    query: { QID: 6, TID },
                   });
                   if (result) {
                     if (result.RefType === "Diagnostic Result") {
@@ -1552,6 +1568,8 @@ async function getDiagnosis(req, res) {
                       data: result,
                     });
                   } else res.send({ status: 404, message: "Data Not Found" });
+                  // });
+                  // });
                   return;
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
@@ -1560,7 +1578,7 @@ async function getDiagnosis(req, res) {
             }
 
             //2-4 WEEKS OR MORE THAN 4 WEEKS
-            else {
+            if (SelectedOptions[2].QID == 3) {
               let points = 0;
 
               SelectedOptions.map((elem) => {
@@ -1610,270 +1628,22 @@ async function getDiagnosis(req, res) {
               count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
               try {
+                // MongoClient.connect(url, function (err, db) {
+                //   if (err) throw err;
+                //   const dbo = db.db("ChatBoat");
                 let result = await Database.GetDbAccess({
                   collection: "diagnosis",
                   query: { MsgId: selectedDiagnosis, TID },
                 });
-                if (result) {
-                  if (result.RefType === "Diagnostic Result") {
-                    result.RefType = "diagnosis";
-                  }
-                  if (result.RefType === "" && result.diagnosis2 === true) {
-                    result.RefType = "Diagnostic Result";
-                  }
-                  res.send({
-                    status: 200,
-                    message: "success",
-                    data: { ...result, count },
-                  });
-                  return;
-                } else res.send({ status: 404, message: "Data Not Found" });
-                return;
-              } catch (error) {
-                res.send({ status: 400, message: error.message });
-                return;
-              }
-            }
-          }
-
-          //EARLIER THAN DUE
-          if (SelectedOptions[1].QID == 2 && SelectedOptions[1].ID == 2) {
-            if (SelectedOptions.length > 2) {
-              if (
-                SelectedOptions[2].QID == 32 &&
-                SelectedOptions[2].ID == 2 &&
-                SelectedOptions[3].QID == 33 &&
-                SelectedOptions[3].ID == 1 &&
-                SelectedOptions[4].QID == 34 &&
-                SelectedOptions[4].ID == 2
-              ) {
-                if (age <= 36) {
-                  try {
-                    let result = await Database.GetDbAccess({
-                      collection: "diagnosis",
-                      query: { MsgId: 19, TID },
-                    });
-                    if (result) {
-                      if (result.RefType === "Diagnostic Result") {
-                        result.RefType = "diagnosis";
-                      }
-                      if (result.RefType === "" && result.diagnosis2 === true) {
-                        result.RefType = "Diagnostic Result";
-                      }
-                      res.send({
-                        status: 200,
-                        message: "success",
-                        data: result,
-                      });
-                    } else
-                      res.send({
-                        status: 404,
-                        message: "Data Not Found",
-                      });
-                    return;
-                  } catch (error) {
-                    res.send({ status: 400, message: error.message });
-                    return;
-                  }
-                } else {
-                  try {
-                    let result = await Database.GetDbAccess({
-                      collection: "diagnosis",
-                      query: { MsgId: 52, TID },
-                    });
-                    if (result) {
-                      if (result.RefType === "Diagnostic Result") {
-                        result.RefType = "diagnosis";
-                      }
-                      if (result.RefType === "" && result.diagnosis2 === true) {
-                        result.RefType = "Diagnostic Result";
-                      }
-                      res.send({
-                        status: 200,
-                        message: "success",
-                        data: result,
-                      });
-                    } else
-                      res.send({
-                        status: 404,
-                        message: "Data Not Found",
-                      });
-                    return;
-                  } catch (error) {
-                    res.send({ status: 400, message: error.message });
-                    return;
-                  }
-                }
-              }
-              if (SelectedOptions[2].QID == 32 && SelectedOptions[2].ID == 2) {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: 18, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                  return;
-                }
-              } else if (
-                SelectedOptions[2].QID == 32 &&
-                SelectedOptions[2].ID == 1
-              ) {
-                //FETCH AGE
-                let age = 17;
-                let questionId;
-                if (age <= 19) questionId = 46;
-                if (age > 36) questionId = 47;
-                else questionId = 48;
-
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: questionId, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                  return;
-                }
-              } else if (
-                SelectedOptions[2].QID == 45 &&
-                SelectedOptions[2].ID == 1
-              ) {
-                //FETCH AGE
-                let age = 39,
-                  questionId;
-                if (age > 36) {
-                  questionId = 46;
-                } else {
-                  questionId = 22;
-                }
-
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "questions",
-                    query: { QID: questionId, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                    return;
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                }
-              }
-            } else {
-              let questionId;
-              if (age > 36) questionId = 65;
-            }
-          }
-
-          if (SelectedOptions[1].QID == 2 && SelectedOptions[1].ID == 3) {
-            if (SelectedOptions[2].QID == 45 && SelectedOptions[2].ID == 2) {
-              let points = 0;
-
-              SelectedOptions.map((elem) => {
-                if (elem.QID == 24 && elem.ID == 1) points += 1;
-                if (elem.QID == 25 && elem.ID == 1) points += 1;
-                if (elem.QID == 26 && elem.ID == 1) points += 1;
-                if (elem.QID == 27 && elem.ID == 1) points += 1;
-                if (elem.QID == 28 && elem.ID == 1) points += 1;
-                if (elem.QID == 29 && elem.ID == 1) points += 1;
-                if (elem.QID == 30 && elem.ID == 1) points += 1;
-                if (elem.QID == 31 && elem.ID == 1) points += 1;
-              });
-
-              let { overweight } = req.body;
-              let status;
-              if (points < 3 && !overweight) {
-                //low
-                status = "low";
-                selectedDiagnosis = 4;
-              }
-              if (points < 3 && overweight) {
-                //medium
-                status = "medium";
-                selectedDiagnosis = 5;
-              }
-              if (points == 3) {
-                //medium
-                status = "medium";
-                selectedDiagnosis = 5;
-              }
-              if (points == 4) {
-                //high
-                status = "high";
-                selectedDiagnosis = 6;
-              }
-              if (points == 5) {
-                //high -v.high
-                status = "high to very high";
-                selectedDiagnosis = 6;
-              }
-              if (points >= 6) {
-                //V.high
-                status = "very high";
-                selectedDiagnosis = 6;
-              }
-
-              count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
-
-              try {
-                let result = await Database.GetDbAccess({
-                  collection: "diagnosis",
-                  query: { MsgId: selectedDiagnosis, TID },
-                });
-
+                // dbo
+                //   .collection("diagnosis")
+                //   .findOne(
+                //     { MsgId: selectedDiagnosis, TID },
+                //     function (err, result) {
+                //       if (err) throw err;
+                //       console.log(result);
+                //       // db.close();
+                //       console.log(answers.length);
                 if (result) {
                   if (result.RefType === "Diagnostic Result") {
                     result.RefType = "diagnosis";
@@ -1894,37 +1664,136 @@ async function getDiagnosis(req, res) {
                 res.send({ status: 400, message: error.message });
               }
             }
-            if (SelectedOptions[2].QID == 45 && SelectedOptions[2].ID == 1) {
-              if (age > 36) {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: selectedDiagnosis, TID },
-                  });
+          }
 
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
+          //EARLIER THAN DUE
+          if (SelectedOptions[1].QID == 2 && SelectedOptions[1].ID == 2) {
+            if (SelectedOptions.length > 2) {
+              if (SelectedOptions[2].QID == 32 && SelectedOptions[2].ID == 2) {
+                if (
+                  SelectedOptions[3].QID == 34 &&
+                  SelectedOptions[3].ID == 1
+                ) {
+                  //FETCH AGE
+                  let age = 39,
+                    questionId;
+                  if (age > 36) {
+                    questionId = 35;
+                  } else {
+                    questionId = 19;
+
+                    try {
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({
+                        collection: "diagnosis",
+                        query: { MsgId: questionId, TID },
+                      });
+                      // dbo
+                      //   .collection("diagnosis")
+                      //   .findOne(
+                      //     { MsgId: questionId, TID },
+                      //     function (err, result) {
+                      //       if (err) throw err;
+                      //       console.log(result);
+                      //       // db.close();
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
+                        res.send({
+                          status: 200,
+                          message: "success",
+                          data: result,
+                        });
+                      } else
+                        res.send({
+                          status: 404,
+                          message: "Data Not Found",
+                        });
+                      //   }
+                      // );
+                      // });
+                    } catch (error) {
+                      res.send({ status: 400, message: error.message });
                     }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: { ...result, count },
+                    return;
+                  }
+
+                  try {
+                    // MongoClient.connect(url, function (err, db) {
+                    //   if (err) throw err;
+                    //   const dbo = db.db("ChatBoat");
+                    let result = await Database.GetDbAccess({
+                      collection: "questions",
+                      query: { QID: questionId, TID },
                     });
-                  } else res.send({ status: 404, message: "Data Not Found" });
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
+                    // dbo
+                    //   .collection("questions")
+                    //   .findOne(
+                    //     { QID: questionId, TID },
+                    //     function (err, result) {
+                    //       if (err) throw err;
+                    //       console.log(result);
+                    //       // db.close();
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: result,
+                      });
+                    } else
+                      res.send({
+                        status: 404,
+                        message: "Data Not Found",
+                      });
+                    //   }
+                    // );
+                    // });
+                  } catch (error) {
+                    res.send({ status: 400, message: error.message });
+                  }
                 }
-              } else {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: 55, TID },
-                  });
+              } else if (
+                SelectedOptions[2].QID == 32 &&
+                SelectedOptions[2].ID == 1
+              ) {
+                //FETCH AGE
+                let age = 17;
+                let questionId;
+                if (age <= 19) questionId = 37;
+                if (age > 36) questionId = 38;
+                else questionId = 40;
 
+                try {
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
+                  let result = await Database.GetDbAccess({
+                    collection: "questions",
+                    query: { QID: questionId, TID },
+                  });
+                  // dbo
+                  //   .collection("questions")
+                  //   .findOne(
+                  //     { QID: questionId, TID },
+                  //     function (err, result) {
+                  //       if (err) throw err;
+                  //       console.log(result);
+                  //       // db.close();
                   if (result) {
                     if (result.RefType === "Diagnostic Result") {
                       result.RefType = "diagnosis";
@@ -1937,44 +1806,73 @@ async function getDiagnosis(req, res) {
                       message: "success",
                       data: result,
                     });
-                  } else res.send({ status: 404, message: "Data Not Found" });
+                  } else
+                    res.send({
+                      status: 404,
+                      message: "Data Not Found",
+                    });
+                  //   }
+                  // );
+                  // });
+                } catch (error) {
+                  res.send({ status: 400, message: error.message });
+                }
+              } else if (
+                SelectedOptions[2].QID == 45 &&
+                SelectedOptions[2].ID == 1
+              ) {
+                //FETCH AGE
+                let age = 39,
+                  questionId;
+                if (age > 36) {
+                  questionId = 46;
+                } else {
+                  questionId = 22;
+                }
+
+                try {
+                  // MongoClient.connect(url, function (err, db) {
+                  //   if (err) throw err;
+                  //   const dbo = db.db("ChatBoat");
+                  let result = await Database.GetDbAccess({
+                    collection: "questions",
+                    query: { QID: questionId, TID },
+                  });
+                  // dbo
+                  //   .collection("questions")
+                  //   .findOne(
+                  //     { QID: questionId, TID },
+                  //     function (err, result) {
+                  //       if (err) throw err;
+                  //       console.log(result);
+                  //       // db.close();
+                  if (result) {
+                    if (result.RefType === "Diagnostic Result") {
+                      result.RefType = "diagnosis";
+                    }
+                    if (result.RefType === "" && result.diagnosis2 === true) {
+                      result.RefType = "Diagnostic Result";
+                    }
+                    res.send({
+                      status: 200,
+                      message: "success",
+                      data: result,
+                    });
+                  } else
+                    res.send({
+                      status: 404,
+                      message: "Data Not Found",
+                    });
+                  //   }
+                  // );
+                  // });
                 } catch (error) {
                   res.send({ status: 400, message: error.message });
                 }
               }
-            }
-          }
-
-          if (SelectedOptions[1].QID == 2 && SelectedOptions[1].ID == 4) {
-            let selectedDiagnosis;
-            if (age > 36) {
-              selectedDiagnosis = 59;
-            } else selectedDiagnosis = 60;
-
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: selectedDiagnosis, TID },
-              });
-
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-              } else res.send({ status: 404, message: "Data Not Found" });
-              //   }
-              // );
-              // });
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
+            } else {
+              let questionId;
+              if (age > 36) questionId = 65;
             }
           }
         }
@@ -1999,10 +1897,19 @@ async function getDiagnosis(req, res) {
                 //LOW
                 if (points < 3) {
                   try {
+                    // MongoClient.connect(url, function (err, db) {
+                    //   if (err) throw err;
+                    //   const dbo = db.db("ChatBoat");
                     let result = await Database.GetDbAccess({
                       collection: "diagnosis",
                       query: { MsgId: 1, TID },
                     });
+                    // dbo
+                    //   .collection("diagnosis")
+                    //   .findOne({ MsgId: 1, TID }, function (err, result) {
+                    //     if (err) throw err;
+                    //     console.log(result);
+                    //     // db.close();
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2020,19 +1927,29 @@ async function getDiagnosis(req, res) {
                         status: 404,
                         message: "Data Not Found",
                       });
+                    // });
+                    // });
                     return;
                   } catch (error) {
                     res.send({ status: 400, message: error.message });
-                    return;
                   }
                 }
                 //MEDIUM OR HIGH
                 else {
                   try {
+                    // MongoClient.connect(url, function (err, db) {
+                    //   if (err) throw err;
+                    //   const dbo = db.db("ChatBoat");
                     let result = await Database.GetDbAccess({
-                      collection: "diagnosis",
-                      query: { MsgId: 54, TID },
+                      collection: "questions",
+                      query: { QID: 62, TID },
                     });
+                    // dbo
+                    //   .collection("questions")
+                    //   .findOne({ QID: 62, TID }, function (err, result) {
+                    //     if (err) throw err;
+                    //     console.log(result);
+                    //     // db.close();
                     if (result) {
                       if (result.RefType === "Diagnostic Result") {
                         result.RefType = "diagnosis";
@@ -2050,9 +1967,482 @@ async function getDiagnosis(req, res) {
                         status: 404,
                         message: "Data Not Found",
                       });
+                    // });
+                    // });
                     return;
                   } catch (error) {
                     res.send({ status: 400, message: error.message });
+                  }
+                }
+              } else {
+                //Previous answers array had all yes - 10 answers, 2 main questions 8 sub
+                let endo = 0,
+                  fibroid = 0,
+                  polyps = 0,
+                  adeno = 0;
+                if (answers.length == 28) {
+                  if (answers[10] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                    adeno += 1;
+                  }
+
+                  if (answers[11] == 1) {
+                    adeno += 1;
+                  }
+
+                  if (answers[12] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                  }
+                  if (answers[13] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                    polyps += 1;
+                    adeno += 1;
+                  }
+                  if (answers[14] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                  }
+                  if (answers[15] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[16] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                    polyps += 1;
+                  }
+                  if (answers[17] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[18] == 1) {
+                    fibroid += 20;
+                  }
+                  if (answers[19] == 1) {
+                    fibroid += 20;
+                  }
+                  if (answers[20] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[21] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[22] == 1) {
+                  }
+                  if (answers[23] == 1) {
+                    fibroid += 20;
+                  }
+                  if (answers[24] == 1) {
+                    polyps += 20;
+                  }
+                  if (answers[25] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[26] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[27] == 1) {
+                    polyps += 20;
+                  }
+
+                  let selectedDiagnosis,
+                    diagnosis = true;
+                  //ENDO
+                  if (age < 35) {
+                    if (answers[10] == 1) {
+                      selectedDiagnosis = 1;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  //ENDO VS FIBROID
+                  else if (age >= 30 && age <= 35) {
+                    if (answers[10] == 1) {
+                      if (endo > fibroid) {
+                        selectedDiagnosis = 1;
+                      } else {
+                        selectedDiagnosis = 2;
+                      }
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  //FIBROID
+                  else if (age > 35 && age < 40) {
+                    if (answers[10] == 1) {
+                      selectedDiagnosis = 2;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  //FIBROID VS POLYPS VS ADENO
+                  else if (age >= 40 && age < 45) {
+                    if (
+                      fibroid > polyps &&
+                      fibroid > adeno &&
+                      answers[10] == 1
+                    ) {
+                      selectedDiagnosis = 2;
+                    } else if (
+                      polyps > fibroid &&
+                      polyps > adeno &&
+                      (answers[13] == 1 || answers[16] == 1)
+                    ) {
+                      selectedDiagnosis = 3;
+                    } else if (
+                      adeno > fibroid &&
+                      adeno > polyps &&
+                      answers[10] == 1 &&
+                      answers[11] == 1
+                    ) {
+                      selectedDiagnosis = 4;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+                  //POLYPS VS ADENO
+                  else {
+                    if (
+                      polyps > adeno &&
+                      (answers[13] == 1 || answers[16] == 1)
+                    ) {
+                      selectedDiagnosis = 3;
+                    } else if (
+                      adeno > polyps &&
+                      answers[10] == 1 &&
+                      answers[11] == 1
+                    ) {
+                      selectedDiagnosis = 4;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  if (diagnosis) {
+                    try {
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({
+                        collection: "diagnosis2",
+                        query: { ID: selectedDiagnosis, TID },
+                      });
+                      // dbo
+                      //   .collection("diagnosis2")
+                      //   .findOne(
+                      //     { ID: selectedDiagnosis, TID },
+                      //     function (err, result) {
+                      //       if (err) throw err;
+                      //       console.log(result);
+                      //       // db.close();
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
+                        res.send({
+                          status: 200,
+                          message: "success",
+                          data: result,
+                        });
+                      } else
+                        res.send({
+                          status: 404,
+                          message: "Data Not Found",
+                        });
+                      //   }
+                      // );
+                      // });
+                      return;
+                    } catch (error) {
+                      res.send({ status: 400, message: error.message });
+                    }
+                  } else {
+                    try {
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({
+                        collection: "diagnosis",
+                        query: { ID: selectedDiagnosis, TID },
+                      });
+                      // dbo
+                      //   .collection("diagnosis")
+                      //   .findOne(
+                      //     { ID: selectedDiagnosis, TID },
+                      //     function (err, result) {
+                      //       if (err) throw err;
+                      //       console.log(result);
+                      //       // db.close();
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
+                        res.send({
+                          status: 200,
+                          message: "success",
+                          data: result,
+                        });
+                      } else
+                        res.send({
+                          status: 404,
+                          message: "Data Not Found",
+                        });
+                      //   }
+                      // );
+                      // });
+                      return;
+                    } catch (error) {
+                      res.send({ status: 400, message: error.message });
+                    }
+                  }
+                }
+
+                if (answers.length == 27) {
+                  if (answers[9] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                    adeno += 1;
+                  }
+
+                  if (answers[10] == 1) {
+                    adeno += 1;
+                  }
+
+                  if (answers[11] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                  }
+                  if (answers[12] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                    polyps += 1;
+                    adeno += 1;
+                  }
+                  if (answers[13] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                  }
+                  if (answers[14] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[15] == 1) {
+                    endo += 1;
+                    fibroid += 1;
+                    polyps += 1;
+                  }
+                  if (answers[16] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[17] == 1) {
+                    fibroid += 20;
+                  }
+                  if (answers[18] == 1) {
+                    fibroid += 20;
+                  }
+                  if (answers[19] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[20] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[21] == 1) {
+                  }
+                  if (answers[22] == 1) {
+                    fibroid += 20;
+                  }
+                  if (answers[23] == 1) {
+                    polyps += 20;
+                  }
+                  if (answers[24] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[25] == 1) {
+                    endo += 20;
+                  }
+                  if (answers[26] == 1) {
+                    polyps += 20;
+                  }
+
+                  let selectedDiagnosis,
+                    diagnosis = true;
+                  //ENDO
+                  if (age < 35) {
+                    if (answers[9] == 1) {
+                      selectedDiagnosis = 1;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  //ENDO VS FIBROID
+                  else if (age >= 30 && age <= 35) {
+                    if (answers[9] == 1) {
+                      if (endo > fibroid) {
+                        selectedDiagnosis = 1;
+                      } else {
+                        selectedDiagnosis = 2;
+                      }
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  //FIBROID
+                  else if (age > 35 && age < 40) {
+                    if (answers[9] == 1) {
+                      selectedDiagnosis = 2;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  //FIBROID VS POLYPS VS ADENO
+                  else if (age >= 40 && age < 45) {
+                    if (
+                      fibroid > polyps &&
+                      fibroid > adeno &&
+                      answers[9] == 1
+                    ) {
+                      selectedDiagnosis = 2;
+                    } else if (
+                      polyps > fibroid &&
+                      polyps > adeno &&
+                      (answers[12] == 1 || answers[15] == 1)
+                    ) {
+                      selectedDiagnosis = 3;
+                    } else if (
+                      adeno > fibroid &&
+                      adeno > polyps &&
+                      answers[9] == 1 &&
+                      answers[10] == 1
+                    ) {
+                      selectedDiagnosis = 4;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+                  //POLYPS VS ADENO
+                  else {
+                    if (
+                      polyps > adeno &&
+                      (answers[12] == 1 || answers[15] == 1)
+                    ) {
+                      selectedDiagnosis = 3;
+                    } else if (
+                      adeno > polyps &&
+                      answers[9] == 1 &&
+                      answers[10] == 1
+                    ) {
+                      selectedDiagnosis = 4;
+                    } else {
+                      diagnosis = false;
+                    }
+                  }
+
+                  if (diagnosis) {
+                    try {
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({
+                        collection: "diagnosis2",
+                        query: { ID: selectedDiagnosis, TID },
+                      });
+                      // dbo
+                      //   .collection("diagnosis2")
+                      //   .findOne(
+                      //     { ID: selectedDiagnosis, TID },
+                      //     function (err, result) {
+                      //       if (err) throw err;
+                      //       console.log(result);
+                      // db.close();
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
+                        res.send({
+                          status: 200,
+                          message: "success",
+                          data: result,
+                        });
+                      } else
+                        res.send({
+                          status: 404,
+                          message: "Data Not Found",
+                        });
+                      //   }
+                      // );
+                      // });
+                    } catch (error) {
+                      res.send({ status: 400, message: error.message });
+                    }
+                    return;
+                  } else {
+                    try {
+                      // MongoClient.connect(url, function (err, db) {
+                      //   if (err) throw err;
+                      //   const dbo = db.db("ChatBoat");
+                      let result = await Database.GetDbAccess({
+                        collection: "diagnosis",
+                        query: { ID: selectedDiagnosis, TID },
+                      });
+                      // dbo
+                      //   .collection("diagnosis")
+                      //   .findOne(
+                      //     { ID: selectedDiagnosis, TID },
+                      //     function (err, result) {
+                      //       if (err) throw err;
+                      //       console.log(result);
+                      //       // db.close();
+                      if (result) {
+                        if (result.RefType === "Diagnostic Result") {
+                          result.RefType = "diagnosis";
+                        }
+                        if (
+                          result.RefType === "" &&
+                          result.diagnosis2 === true
+                        ) {
+                          result.RefType = "Diagnostic Result";
+                        }
+                        res.send({
+                          status: 200,
+                          message: "success",
+                          data: result,
+                        });
+                      } else
+                        res.send({
+                          status: 404,
+                          message: "Data Not Found",
+                        });
+                      //   }
+                      // );
+                      // });
+                      return;
+                    } catch (error) {
+                      res.send({ status: 400, message: error.message });
+                    }
                   }
                 }
               }
@@ -2061,103 +2451,8 @@ async function getDiagnosis(req, res) {
 
             if (SelectedOptions[1].QID == 94 && SelectedOptions[0].ID == 2) {
               if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 1) {
-                let selectedDiagnosis;
+                let selectedDiagnosis = 37;
                 if (bmi < 18.5) {
-                  selectedDiagnosis = 37;
-                }
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: selectedDiagnosis, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else res.send({ status: 404, message: "Data Not Found" });
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                }
-              }
-              if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 2) {
-                let points = 0;
-
-                SelectedOptions.map((elem) => {
-                  if (elem.QID == 24 && elem.ID == 1) points += 1;
-                  if (elem.QID == 25 && elem.ID == 1) points += 1;
-                  if (elem.QID == 26 && elem.ID == 1) points += 1;
-                  if (elem.QID == 27 && elem.ID == 1) points += 1;
-                  if (elem.QID == 28 && elem.ID == 1) points += 1;
-                  if (elem.QID == 29 && elem.ID == 1) points += 1;
-                  if (elem.QID == 30 && elem.ID == 1) points += 1;
-                  if (elem.QID == 31 && elem.ID == 1) points += 1;
-                });
-
-                let { overweight } = req.body;
-                let status;
-                if (points < 3 && !overweight) {
-                  //low
-                  status = "low";
-                  selectedDiagnosis = 65;
-                }
-                if (points < 3 && overweight) {
-                  //medium
-                  status = "medium";
-                  selectedDiagnosis = 5;
-                }
-                if (points == 3) {
-                  //medium
-                  status = "medium";
-                  selectedDiagnosis = 5;
-                }
-                if (points == 4) {
-                  //high
-                  status = "high";
-                  selectedDiagnosis = 6;
-                }
-                if (points == 5) {
-                  //high -v.high
-                  status = "high to very high";
-                  selectedDiagnosis = 6;
-                }
-                if (points >= 6) {
-                  //V.high
-                  status = "very high";
-                  selectedDiagnosis = 6;
-                }
-
-                count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: selectedDiagnosis, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: { ...result, count },
-                    });
-                  } else res.send({ status: 404, message: "Data Not Found" });
-                  //   }
-                  // );
-                  // });
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
                 }
               }
             }
@@ -2178,10 +2473,19 @@ async function getDiagnosis(req, res) {
 
           if (points == 0) {
             try {
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
               let result = await Database.GetDbAccess({
                 collection: "diagnosis",
                 query: { MsgId: 42, TID },
               });
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne({ MsgId: 42, TID }, function (err, result) {
+              //     if (err) throw err;
+              //     console.log(result);
+              //     // db.close();
               if (result) {
                 if (result.RefType === "Diagnostic Result") {
                   result.RefType = "diagnosis";
@@ -2194,20 +2498,29 @@ async function getDiagnosis(req, res) {
                   message: "success",
                   data: result,
                 });
-                return;
               } else res.send({ status: 404, message: "Data Not Found" });
+              // });
+              // });
               return;
             } catch (error) {
               res.send({ status: 400, message: error.message });
-              return;
             }
           }
           if (points == 1) {
             try {
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
               let result = await Database.GetDbAccess({
                 collection: "diagnosis",
                 query: { MsgId: 43, TID },
               });
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne({ MsgId: 43, TID }, function (err, result) {
+              //     if (err) throw err;
+              //     console.log(result);
+              //     // db.close();
               if (result) {
                 if (result.RefType === "Diagnostic Result") {
                   result.RefType = "diagnosis";
@@ -2220,33 +2533,45 @@ async function getDiagnosis(req, res) {
                   message: "success",
                   data: result,
                 });
-                return;
               } else res.send({ status: 404, message: "Data Not Found" });
+              // });
+              // });
               return;
             } catch (error) {
               res.send({ status: 400, message: error.message });
-              return;
             }
           }
           if (points > 1) {
-            selectedDiagnosis = 44;
+            selectedDiagnosis = 116;
             try {
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
               let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: selectedDiagnosis, TID },
+                collection: "questions",
+                query: { QID: selectedDiagnosis, TID },
               });
+              // dbo
+              //   .collection("diagnosis")
+              //   .findOne(
+              //     { MsgId: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
               if (result) {
                 res.send({
                   status: 200,
                   message: "success",
                   data: result,
                 });
-                return;
               } else res.send({ status: 404, message: "Data Not Found" });
-              return;
+              //   }
+              // );
+              // });
             } catch (error) {
               res.send({ status: 400, message: error.message });
-              return;
             }
           }
         }
@@ -2260,22 +2585,19 @@ async function getDiagnosis(req, res) {
             "IUDs, and birth control pills, and other horminal medications can have an effect on your period cycle. Please consult your doctor immediately if you suspect this to be the case - you may need to chance your medication";
           const thinner =
             "Blood thinners contain substances called anti-coagulants. Anticoagulants can cause you to bleed more frequently and have heavier bleeding than normal";
-          let text = "";
+          let text;
           if (SelectedOptions[0].QID == 37 && SelectedOptions[0].ID == 1) {
-            text += menarche1 + "\n\n";
+            text += menarche1;
           }
           if (SelectedOptions[1].QID == 40 && SelectedOptions[1].ID == 1) {
-            text += wt1 + "\n\n";
+            text += wt1;
           }
           if (SelectedOptions[2].QID == 41 && SelectedOptions[2].ID == 1) {
-            text += hormonalmed1 + "\n\n";
+            text += hormonalmed1;
           }
           if (SelectedOptions[3].QID == 42 && SelectedOptions[3].ID == 1) {
-            text += thinner + "\n\n";
+            text += thinner;
           }
-          if (text == "")
-            text =
-              "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
 
           result = {
             Message: text,
@@ -2285,7 +2607,6 @@ async function getDiagnosis(req, res) {
           };
 
           res.send({ status: 200, message: "success", data: result });
-          return;
         }
 
         if (SelectedOptions[0].QID == 38) {
@@ -2295,22 +2616,19 @@ async function getDiagnosis(req, res) {
             "IUDs, and birth control pills, and other horminal medications can have an effect on your period cycle. Please consult your doctor immediately if you suspect this to be the case - you may need to chance your medication";
           const thinner =
             "Blood thinners contain substances called anti-coagulants. Anticoagulants can cause you to bleed more frequently and have heavier bleeding than normal";
-          let text = "";
+          let text;
 
           SelectedOptions.map((elem) => {
             if (elem.QID == 40 && elem.ID == 1) {
-              text += wt1 + "\n\n";
+              text += wt1;
             }
             if (elem.QID == 41 && elem.ID == 1) {
-              text += hormonalmed1 + "\n\n";
+              text += hormonalmed1;
             }
             if (elem.QID == 42 && elem.ID == 1) {
-              text += thinner + "\n\n";
+              text += thinner;
             }
           });
-          if (text == "")
-            text =
-              "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
           result = {
             Message: text,
             NextRef: 43,
@@ -2319,42 +2637,6 @@ async function getDiagnosis(req, res) {
           };
 
           res.send({ status: 200, message: "success", data: result });
-          return;
-        }
-
-        if (SelectedOptions[0].QID == 40) {
-          const wt1 =
-            "Weight fluctuations tend to have an effect on your menstrual cycles. Sometimes, excessively depriving yourself of nutrition can lead you to have anovulatory menstrual cycles - when you do not ovulate but some hormonal imbalances can cause your uterine lining to be shed, making you mistake it for a period";
-          const hormonalmed1 =
-            "IUDs, and birth control pills, and other horminal medications can have an effect on your period cycle. Please consult your doctor immediately if you suspect this to be the case - you may need to chance your medication";
-          const thinner =
-            "Blood thinners contain substances called anti-coagulants. Anticoagulants can cause you to bleed more frequently and have heavier bleeding than normal";
-          let text = "";
-
-          SelectedOptions.map((elem) => {
-            if (elem.QID == 40 && elem.ID == 1) {
-              text += wt1 + "\n\n";
-            }
-            if (elem.QID == 41 && elem.ID == 1) {
-              text += hormonalmed1 + "\n\n";
-            }
-            if (elem.QID == 42 && elem.ID == 1) {
-              text += thinner + "\n\n";
-            }
-          });
-
-          if (text == "")
-            text =
-              "We will now ask you some more questions to identify if you may be having heavy or painful Periods";
-          result = {
-            Message: text,
-            NextRef: 43,
-            Destination: false,
-            TID: 7,
-          };
-
-          res.send({ status: 200, message: "success", data: result });
-          return;
         }
 
         //PCOS SCREENING
@@ -2408,10 +2690,22 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
             let result = await Database.GetDbAccess({
               collection: "diagnosis",
               query: { MsgId: selectedDiagnosis, TID },
             });
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne(
+            //     { MsgId: selectedDiagnosis, TID },
+            //     function (err, result) {
+            //       if (err) throw err;
+            //       console.log(result);
+            //       // db.close();
+            //       console.log(answers.length);
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -2483,10 +2777,22 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
             let result = await Database.GetDbAccess({
               collection: "diagnosis",
               query: { MsgId: selectedDiagnosis, TID },
             });
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne(
+            //     { MsgId: selectedDiagnosis, TID },
+            //     function (err, result) {
+            //       if (err) throw err;
+            //       console.log(result);
+            //       // db.close();
+            //       console.log(answers.length);
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -2500,6 +2806,9 @@ async function getDiagnosis(req, res) {
                 data: { ...result, count },
               });
             } else res.send({ status: 404, message: "Data Not Found" });
+            //   }
+            // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
           }
@@ -2524,7 +2833,43 @@ async function getDiagnosis(req, res) {
           if (points < 3 && !overweight) {
             //low
             status = "low";
-            selectedDiagnosis = 56;
+            selectedDiagnosis = 105;
+            try {
+              // MongoClient.connect(url, function (err, db) {
+              //   if (err) throw err;
+              //   const dbo = db.db("ChatBoat");
+              let result = await Database.GetDbAccess({
+                collection: "questions",
+                query: { QID: selectedDiagnosis, TID },
+              });
+              // dbo
+              //   .collection("questions")
+              //   .findOne(
+              //     { QID: selectedDiagnosis, TID },
+              //     function (err, result) {
+              //       if (err) throw err;
+              //       console.log(result);
+              //       // db.close();
+              //       console.log(answers.length);
+              if (result) {
+                if (result.RefType === "Diagnostic Result") {
+                  result.RefType = "diagnosis";
+                }
+                if (result.RefType === "" && result.diagnosis2 === true) {
+                  result.RefType = "Diagnostic Result";
+                }
+                res.send({
+                  status: 200,
+                  message: "success",
+                  data: { ...result, count },
+                });
+              } else res.send({ status: 404, message: "Data Not Found" });
+              //   }
+              // );
+              // });
+            } catch (error) {
+              res.send({ status: 400, message: error.message });
+            }
           }
           if (points < 3 && overweight) {
             //medium
@@ -2571,81 +2916,6 @@ async function getDiagnosis(req, res) {
             //       console.log(result);
             //       // db.close();
             //       console.log(answers.length);
-            if (result) {
-              if (result.RefType === "Diagnostic Result") {
-                result.RefType = "diagnosis";
-              }
-              if (result.RefType === "" && result.diagnosis2 === true) {
-                result.RefType = "Diagnostic Result";
-              }
-              res.send({
-                status: 200,
-                message: "success",
-                data: { ...result, count },
-              });
-            } else res.send({ status: 404, message: "Data Not Found" });
-            //   }
-            // );
-            // });
-          } catch (error) {
-            res.send({ status: 400, message: error.message });
-          }
-        }
-
-        if (SelectedOptions[0].QID == 152) {
-          let points = 0;
-
-          SelectedOptions.map((elem) => {
-            if (elem.QID == 152 && elem.ID == 1) points += 1;
-            if (elem.QID == 153 && elem.ID == 1) points += 1;
-            if (elem.QID == 154 && elem.ID == 1) points += 1;
-            if (elem.QID == 155 && elem.ID == 1) points += 1;
-            if (elem.QID == 156 && elem.ID == 1) points += 1;
-            if (elem.QID == 157 && elem.ID == 1) points += 1;
-            if (elem.QID == 158 && elem.ID == 1) points += 1;
-            if (elem.QID == 159 && elem.ID == 1) points += 1;
-          });
-
-          let { overweight } = req.body;
-          let status;
-          if (points < 3 && !overweight) {
-            //low
-            status = "low";
-            selectedDiagnosis = 4;
-          }
-          if (points < 3 && overweight) {
-            //medium
-            status = "medium";
-            selectedDiagnosis = 5;
-          }
-          if (points == 3) {
-            //medium
-            status = "medium";
-            selectedDiagnosis = 5;
-          }
-          if (points == 4) {
-            //high
-            status = "high";
-            selectedDiagnosis = 6;
-          }
-          if (points == 5) {
-            //high -v.high
-            status = "high to very high";
-            selectedDiagnosis = 6;
-          }
-          if (points >= 6) {
-            //V.high
-            status = "very high";
-            selectedDiagnosis = 6;
-          }
-
-          count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
-
-          try {
-            let result = await Database.GetDbAccess({
-              collection: "diagnosis",
-              query: { MsgId: selectedDiagnosis, TID },
-            });
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -2724,10 +2994,22 @@ async function getDiagnosis(req, res) {
           count = `You have indicated a positive response to ${points} of 8 of typical PCOS related symptoms. We categorise your PCOS risk as ${status}. PCOS or polycystic ovaries syndrome is a commonly occuring condition among women, typically identified through irregular periods as well as due to certain symptoms which we just screened you for, that indicate higher levels of androgens (male hormones).  Read on to know more about your assessment and how to manage it`;
 
           try {
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
             let result = await Database.GetDbAccess({
               collection: "diagnosis",
               query: { MsgId: selectedDiagnosis, TID },
             });
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne(
+            //     { MsgId: selectedDiagnosis, TID },
+            //     function (err, result) {
+            //       if (err) throw err;
+            //       console.log(result);
+            //       // db.close();
+            //       console.log(answers.length);
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -2740,51 +3022,12 @@ async function getDiagnosis(req, res) {
                 message: "success",
                 data: { ...result, result },
               });
-              return;
             } else res.send({ status: 404, message: "Data Not Found" });
-            return;
+            //   }
+            // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
-            return;
-          }
-        }
-
-        if (SelectedOptions[0].QID == 146) {
-          let selectedDiagnosis;
-          if (age > 36) {
-            selectedDiagnosis = 72;
-          } else {
-            const answers = SelectedOptions.filter((elem) => elem.ID == 1);
-            if (answers.length < 1) {
-              selectedDiagnosis = 79;
-            } else {
-              selectedDiagnosis = 78;
-            }
-          }
-
-          try {
-            let result = await Database.GetDbAccess({
-              collection: "diagnosis",
-              query: { MsgId: selectedDiagnosis, TID },
-            });
-            if (result) {
-              if (result.RefType === "Diagnostic Result") {
-                result.RefType = "diagnosis";
-              }
-              if (result.RefType === "" && result.diagnosis2 === true) {
-                result.RefType = "Diagnostic Result";
-              }
-              res.send({
-                status: 200,
-                message: "success",
-                data: result,
-              });
-              return;
-            } else res.send({ status: 404, message: "Data Not Found" });
-            return;
-          } catch (error) {
-            res.send({ status: 400, message: error.message });
-            return;
           }
         }
 
@@ -2806,650 +3049,43 @@ async function getDiagnosis(req, res) {
             if (elem.QID == 21 && elem.ID == 1) stress = true;
           });
 
-          let text = "";
-
-          let ovrwt =
-            "In your case, your periods may be irregular because of your weight - which does have an effect on your hormone levels. Start following a regimented exercise routine to slowly reduce your weight over time, and avoid crash diets. That should help you restore your cycle! :)";
-          let underwt =
-            "Our system categorises you as underweight. In your case, your periods may be irregular because of your weight - which does have an effect on your hormone levels. Start following a regimented exercise routine to slowly reduce your weight over time, and avoid crash diets. That should help you restore your cycle! :)";
-          let anemia1t =
-            "Anemia can certainly have an impact on your flow - not having enough iron in your blood, can lead to a lot of exhaustion and also to delayed and light periods. ";
-          let anemia11t =
-            "Feeling tired, restless, irritable or dizzy can be signs of anemia - get yourself tested for anemia so you can start with iron supplements - Anemia can certainly have an impact on your flow - not having enough iron in your blood, can lead to a lot of exhaustion and also to delayed and light periods. ";
-          let stresst =
-            "Stress is supposed to have an effect on your periods because it affects your hypothallamus - the part of your brain that is responsible for many of the hormones which eventually cause your periods. You may not be getting your periods because you may be stressed out. So take a deep breath, and try to see if you can find ways to remedy the cause of your stress! We are always here for you";
-
-          if (bmi > 24.9) text += ovrwt + "\n\n";
-          if (bmi < 18.5) text += underwt + "\n\n";
-          if (anemia1) text += anemia1t + "\n\n";
-          if (anemia11) text += anemia11t + "\n\n";
-          if (stress) text += stresst + "\n\n";
-          if (text == "")
-            text =
-              "It looks like you may not have any of the common reasons for delayed periods. In your case, if you do not get your periods every three months, its a good idea to see a doctor as your delayed periods may be caused by non gynecological issues like throid, blood sugar etc. Take care and do check our forum to get connected to experts!";
-
-          let result = {
-            MsgId: "1000",
-            Message: text,
-            NextRef: -1,
-            RefType: "",
-            TID: 7,
-          };
-          try {
-            res.send({
-              status: 200,
-              message: "success",
-              data: result,
-            });
-            return;
-          } catch (error) {
-            res.send({ status: 400, message: error.message });
-            return;
-          }
-        }
-
-        if (
-          SelectedOptions[0].QID == 43 &&
-          SelectedOptions[0].ID == 2 &&
-          SelectedOptions[1].QID == 44 &&
-          SelectedOptions[1].ID == 1
-        ) {
-          let points = 0;
-          SelectedOptions.map((elem) => {
-            if (elem.QID == 139 && elem.ID == 1) points += 0;
-            if (elem.QID == 139 && elem.ID == 2) points += 1;
-            if (elem.QID == 139 && elem.ID == 3) points += 2;
-            if (elem.QID == 134 && elem.ID == 2) points += 1;
-            if (elem.QID == 135 && elem.ID == 1) points += 1;
-            if (elem.QID == 136 && elem.ID == 1) points += 1;
-            if (elem.QID == 138 && elem.ID == 1) points += 2;
-          });
-
-          if (points == 0) {
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: 50, TID },
-              });
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-                return;
-              } else res.send({ status: 404, message: "Data Not Found" });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-              return;
+          if (temp1 || temp11) {
+            if (bmi > 24.9) {
+              selectedDiagnosis = 10;
             }
-          }
-          if (points == 1) {
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: 51, TID },
-              });
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-                return;
-              } else res.send({ status: 404, message: "Data Not Found" });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-              return;
+
+            if (bmi < 18.5) {
+              selectedDiagnosis = 11;
+            } else {
+              selectedDiagnosis = 12;
             }
-          }
-          if (points > 1) {
-            selectedDiagnosis = 44;
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: selectedDiagnosis, TID },
-              });
-              if (result) {
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-                return;
-              } else res.send({ status: 404, message: "Data Not Found" });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-              return;
-            }
-          }
-        }
-
-        if (SelectedOptions[0].QID == 75) {
-          {
-            //Previous answers array had all yes - 10 answers, 2 main questions 8 sub
-            let endo = 0,
-              fibroid = 0,
-              polyps = 0,
-              adeno = 0;
-            if (answers.length == 18) {
-              if (answers[0] == 1) {
-                endo += 1;
-                fibroid += 1;
-                adeno += 1;
-              }
-
-              if (answers[1] == 1) {
-                adeno += 1;
-              }
-
-              if (answers[2] == 1) {
-                endo += 1;
-                fibroid += 1;
-              }
-              if (answers[3] == 1) {
-                endo += 1;
-                fibroid += 1;
-                polyps += 1;
-                adeno += 1;
-              }
-              if (answers[4] == 1) {
-                endo += 1;
-                fibroid += 1;
-              }
-              if (answers[5] == 1) {
-                endo += 20;
-              }
-              if (answers[6] == 1) {
-                endo += 1;
-                fibroid += 1;
-                polyps += 1;
-              }
-              if (answers[7] == 1) {
-                endo += 20;
-              }
-              if (answers[8] == 1) {
-                fibroid += 20;
-              }
-              if (answers[9] == 1) {
-                fibroid += 20;
-              }
-              if (answers[10] == 1) {
-                endo += 20;
-              }
-              if (answers[11] == 1) {
-                endo += 20;
-              }
-              if (answers[12] == 1) {
-              }
-              if (answers[13] == 1) {
-                fibroid += 20;
-              }
-              if (answers[14] == 1) {
-                polyps += 20;
-              }
-              if (answers[15] == 1) {
-                endo += 20;
-              }
-              if (answers[16] == 1) {
-                endo += 20;
-              }
-              if (answers[17] == 1) {
-                polyps += 20;
-              }
-
-              console.log(endo, fibroid, polyps, adeno);
-              let selectedDiagnosis,
-                diagnosis = true;
-              //ENDO
-              if (age < 35) {
-                if (answers[0] == 1) {
-                  selectedDiagnosis = 1;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              //ENDO VS FIBROID
-              else if (age >= 30 && age <= 35) {
-                if (answers[0] == 1) {
-                  if (endo > fibroid) {
-                    selectedDiagnosis = 1;
-                    diagnosis = true;
-                  } else {
-                    selectedDiagnosis = 2;
-                    diagnosis = true;
-                  }
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              //FIBROID
-              else if (age > 35 && age < 40) {
-                if (answers[0] == 1) {
-                  selectedDiagnosis = 2;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              //FIBROID VS POLYPS VS ADENO
-              else if (age >= 40 && age < 45) {
-                if (fibroid > polyps && fibroid > adeno && answers[0] == 1) {
-                  selectedDiagnosis = 2;
-                  diagnosis = true;
-                } else if (
-                  polyps > fibroid &&
-                  polyps > adeno &&
-                  (answers[3] == 1 || answers[6] == 1)
-                ) {
-                  selectedDiagnosis = 3;
-                  diagnosis = true;
-                } else if (
-                  adeno > fibroid &&
-                  adeno > polyps &&
-                  answers[0] == 1 &&
-                  answers[1] == 1
-                ) {
-                  selectedDiagnosis = 4;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-              //POLYPS VS ADENO
-              else {
-                if (polyps > adeno && (answers[3] == 1 || answers[6] == 1)) {
-                  selectedDiagnosis = 3;
-                  diagnosis = true;
-                } else if (
-                  adeno > polyps &&
-                  answers[0] == 1 &&
-                  answers[1] == 1
-                ) {
-                  selectedDiagnosis = 4;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              if (diagnosis) {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: selectedDiagnosis, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                }
-              } else {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: 2, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                }
-              }
-            }
-          }
-        }
-
-        if (SelectedOptions[0].QID == 116) {
-          {
-            //Previous answers array had all yes - 10 answers, 2 main questions 8 sub
-            let endo = 0,
-              fibroid = 0,
-              polyps = 0,
-              adeno = 0;
-            if (answers.length == 18) {
-              if (answers[0] == 1) {
-                endo += 1;
-                fibroid += 1;
-                adeno += 1;
-              }
-
-              if (answers[1] == 1) {
-                adeno += 1;
-              }
-
-              if (answers[2] == 1) {
-                endo += 1;
-                fibroid += 1;
-              }
-              if (answers[3] == 1) {
-                endo += 1;
-                fibroid += 1;
-                polyps += 1;
-                adeno += 1;
-              }
-              if (answers[4] == 1) {
-                endo += 1;
-                fibroid += 1;
-              }
-              if (answers[5] == 1) {
-                endo += 20;
-              }
-              if (answers[6] == 1) {
-                endo += 1;
-                fibroid += 1;
-                polyps += 1;
-              }
-              if (answers[7] == 1) {
-                endo += 20;
-              }
-              if (answers[8] == 1) {
-                fibroid += 20;
-              }
-              if (answers[9] == 1) {
-                fibroid += 20;
-              }
-              if (answers[10] == 1) {
-                endo += 20;
-              }
-              if (answers[11] == 1) {
-                endo += 20;
-              }
-              if (answers[12] == 1) {
-              }
-              if (answers[13] == 1) {
-                fibroid += 20;
-              }
-              if (answers[14] == 1) {
-                polyps += 20;
-              }
-              if (answers[15] == 1) {
-                endo += 20;
-              }
-              if (answers[16] == 1) {
-                endo += 20;
-              }
-              if (answers[17] == 1) {
-                polyps += 20;
-              }
-
-              console.log(endo, fibroid, polyps, adeno);
-              let selectedDiagnosis,
-                diagnosis = true;
-              //ENDO
-              if (age < 35) {
-                if (answers[0] == 1) {
-                  selectedDiagnosis = 1;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              //ENDO VS FIBROID
-              else if (age >= 30 && age <= 35) {
-                if (answers[0] == 1) {
-                  if (endo > fibroid) {
-                    selectedDiagnosis = 1;
-                    diagnosis = true;
-                  } else {
-                    selectedDiagnosis = 2;
-                    diagnosis = true;
-                  }
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              //FIBROID
-              else if (age > 35 && age < 40) {
-                if (answers[0] == 1) {
-                  selectedDiagnosis = 2;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              //FIBROID VS POLYPS VS ADENO
-              else if (age >= 40 && age < 45) {
-                if (fibroid > polyps && fibroid > adeno && answers[0] == 1) {
-                  selectedDiagnosis = 2;
-                  diagnosis = true;
-                } else if (
-                  polyps > fibroid &&
-                  polyps > adeno &&
-                  (answers[3] == 1 || answers[6] == 1)
-                ) {
-                  selectedDiagnosis = 3;
-                  diagnosis = true;
-                } else if (
-                  adeno > fibroid &&
-                  adeno > polyps &&
-                  answers[0] == 1 &&
-                  answers[1] == 1
-                ) {
-                  selectedDiagnosis = 4;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-              //POLYPS VS ADENO
-              else {
-                if (polyps > adeno && (answers[3] == 1 || answers[6] == 1)) {
-                  selectedDiagnosis = 3;
-                  diagnosis = true;
-                } else if (
-                  adeno > polyps &&
-                  answers[0] == 1 &&
-                  answers[1] == 1
-                ) {
-                  selectedDiagnosis = 4;
-                  diagnosis = true;
-                } else {
-                  diagnosis = false;
-                }
-              }
-
-              if (diagnosis) {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: selectedDiagnosis, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                }
-              } else {
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: 2, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
-                    });
-                  } else
-                    res.send({
-                      status: 404,
-                      message: "Data Not Found",
-                    });
-                  return;
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
-                }
-              }
-            }
-          }
-        }
-
-        if (SelectedOptions[0].QID == 58) {
-          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
-
-          if (answers.length < 1) {
-            //57 diagnosis
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: 57, TID },
-              });
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-              } else
-                res.send({
-                  status: 404,
-                  message: "Data Not Found",
-                });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-              return;
-            }
+          } else if (anemia1) {
+            selectedDiagnosis = 13;
+          } else if (anemia11) {
+            selectedDiagnosis = 14;
+          } else if (stress) {
+            selectedDiagnosis = 15;
           } else {
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: 58, TID },
-              });
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-              } else
-                res.send({
-                  status: 404,
-                  message: "Data Not Found",
-                });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-              return;
-            }
+            selectedDiagnosis = 16;
           }
-        }
 
-        if (SelectedOptions[0].QID == 146) {
-          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
-          let selectedDiagnosis;
-          if (answers.length < 1) {
-            if (age > 36) {
-              selectedDiagnosis = 69;
-            } else selectedDiagnosis = 71;
-          }
-        }
-
-        if (SelectedOptions[0].QID == 145) {
-          let selectedDiagnosis;
-          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
-          SelectedOptions.map((elem) => {
-            if (elem.QID == 149 && elem.ID == 1) selectedDiagnosis = 80;
-            if (elem.QID == 149 && elem.ID == 2) selectedDiagnosis = 81;
-          });
-          if (answers.length < 1) {
-            selectedDiagnosis = 83;
-          }
           try {
+            // MongoClient.connect(url, function (err, db) {
+            //   if (err) throw err;
+            //   const dbo = db.db("ChatBoat");
             let result = await Database.GetDbAccess({
               collection: "diagnosis",
               query: { MsgId: selectedDiagnosis, TID },
             });
+            // dbo
+            //   .collection("diagnosis")
+            //   .findOne(
+            //     { MsgId: selectedDiagnosis, TID },
+            //     function (err, result) {
+            //       if (err) throw err;
+            //       console.log(result);
+            //       // db.close();
+            //       console.log(answers.length);
             if (result) {
               if (result.RefType === "Diagnostic Result") {
                 result.RefType = "diagnosis";
@@ -3462,137 +3098,67 @@ async function getDiagnosis(req, res) {
                 message: "success",
                 data: result,
               });
-            } else
-              res.send({
-                status: 404,
-                message: "Data Not Found",
-              });
-            return;
+            } else res.send({ status: 404, message: "Data Not Found" });
+            //   }
+            // );
+            // });
           } catch (error) {
             res.send({ status: 400, message: error.message });
-            return;
           }
         }
 
-        if (SelectedOptions[0].QID == 142) {
-          //age >36
-          let selectedDiagnosis;
-          const answers = SelectedOptions.filter((elem) => elem.ID == 1);
-
-          SelectedOptions.map((elem) => {
-            if (elem.QID == 149 && elem.ID == 1) selectedDiagnosis = 80;
-            if (elem.QID == 149 && elem.ID == 2) selectedDiagnosis = 81;
-          });
-          if (answers.length < 1) {
-            selectedDiagnosis = 83;
-          }
-          try {
-            let result = await Database.GetDbAccess({
-              collection: "diagnosis",
-              query: { MsgId: selectedDiagnosis, TID },
-            });
-            if (result) {
-              if (result.RefType === "Diagnostic Result") {
-                result.RefType = "diagnosis";
-              }
-              if (result.RefType === "" && result.diagnosis2 === true) {
-                result.RefType = "Diagnostic Result";
-              }
-              res.send({
-                status: 200,
-                message: "success",
-                data: result,
-              });
-            } else
-              res.send({
-                status: 404,
-                message: "Data Not Found",
-              });
-            return;
-          } catch (error) {
-            res.send({ status: 400, message: error.message });
-            return;
-          }
-        }
-
-        if (SelectedOptions[0].QID == 43) {
-          let points = 0;
-          if (answers[0] == 1) points += 2;
-          if (answers[1] == 1) points += 1;
-          if (answers[2] == 1) points += 1;
-          if (answers[3] == 1) points += 1;
-          if (answers[4] == 1) points += 1;
-          if (answers[5] == 1) points += 2;
-          if (answers.length > 6) {
-            if (answers[6] == 1) points += 1;
-          }
-          //LOW
-          if (points < 3) {
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: 1, TID },
-              });
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-              } else
-                res.send({
-                  status: 404,
-                  message: "Data Not Found",
-                });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-              return;
-            }
-          }
-          //MEDIUM OR HIGH
-          else {
-            try {
-              let result = await Database.GetDbAccess({
-                collection: "diagnosis",
-                query: { MsgId: 54, TID },
-              });
-              if (result) {
-                if (result.RefType === "Diagnostic Result") {
-                  result.RefType = "diagnosis";
-                }
-                if (result.RefType === "" && result.diagnosis2 === true) {
-                  result.RefType = "Diagnostic Result";
-                }
-                res.send({
-                  status: 200,
-                  message: "success",
-                  data: result,
-                });
-              } else
-                res.send({
-                  status: 404,
-                  message: "Data Not Found",
-                });
-              return;
-            } catch (error) {
-              res.send({ status: 400, message: error.message });
-            }
-          }
-        }
         // ----------------------------------------------------------
-      } else {
+      }
+      if (
+        req.body.MsgId !== "-1" &&
+        req.body.MsgId !== "" &&
+        req.body.MsgId !== null &&
+        req.body.MsgId !== undefined
+      ) {
         try {
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
           let result = await Database.GetDbAccess({
             collection: "diagnosis",
             query: { MsgId, TID },
           });
+          // dbo
+          //   .collection("diagnosis2")
+          //   .findOne({ ID: MsgId, TID }, function (err, result) {
+          //     if (err) throw err;
+          //     console.log(result);
+          // db.close();
+          if (result) {
+            if (result.RefType === "Diagnostic Result") {
+              result.RefType = "diagnosis";
+            }
+            if (result.RefType === "" && result.diagnosis2 === true) {
+              result.RefType = "Diagnostic Result";
+            }
+            res.send({ status: 200, message: "success", data: result });
+          } else res.send({ status: 404, message: "Data Not Found" });
+          return;
+          // });
+          // });
+        } catch (error) {
+          res.send({ status: 400, message: error.message });
+        }
+      } else {
+        try {
+          // MongoClient.connect(url, function (err, db) {
+          //   if (err) throw err;
+          //   const dbo = db.db("ChatBoat");
+          let result = await Database.GetDbAccess({
+            collection: "diagnosis",
+            query: { MsgId, TID },
+          });
+          // dbo
+          //   .collection("diagnosis")
+          //   .findOne({ MsgId, TID }, function (err, result) {
+          //     if (err) throw err;
+          //     console.log(result);
+          //     // db.close();
           if (result) {
             if (result.RefType === "Diagnostic Result") {
               result.RefType = "diagnosis";
