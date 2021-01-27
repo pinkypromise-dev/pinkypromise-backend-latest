@@ -3042,9 +3042,9 @@ async function getDiagnosis(req, res) {
               let selectedDiagnosis,
                 diagnosis = true;
               //ENDO
-              if (age < 35) {
+              if (age < 30) {
                 if (answers[0] == 1) {
-                  selectedDiagnosis = 1;
+                  selectedDiagnosis = 91;
                   diagnosis = true;
                 } else {
                   diagnosis = false;
@@ -3055,21 +3055,23 @@ async function getDiagnosis(req, res) {
               else if (age >= 30 && age <= 35) {
                 if (answers[0] == 1) {
                   if (endo > fibroid) {
-                    selectedDiagnosis = 1;
+                    selectedDiagnosis = 91;
                     diagnosis = true;
                   } else {
-                    selectedDiagnosis = 2;
+                    selectedDiagnosis = 92;
                     diagnosis = true;
                   }
                 } else {
                   diagnosis = false;
                 }
+                console.log('fibro');
               }
 
               //FIBROID
-              else if (age > 35 && age < 40) {
+              else if (age > 35 && age <= 40) {
+                console.log('fibroid 1');
                 if (answers[0] == 1) {
-                  selectedDiagnosis = 2;
+                  selectedDiagnosis = 92;
                   diagnosis = true;
                 } else {
                   diagnosis = false;
@@ -3079,14 +3081,14 @@ async function getDiagnosis(req, res) {
               //FIBROID VS POLYPS VS ADENO
               else if (age >= 40 && age < 45) {
                 if (fibroid > polyps && fibroid > adeno && answers[0] == 1) {
-                  selectedDiagnosis = 2;
+                  selectedDiagnosis = 92;
                   diagnosis = true;
                 } else if (
                   polyps > fibroid &&
                   polyps > adeno &&
                   (answers[3] == 1 || answers[6] == 1)
                 ) {
-                  selectedDiagnosis = 3;
+                  selectedDiagnosis = 93;
                   diagnosis = true;
                 } else if (
                   adeno > fibroid &&
@@ -3094,7 +3096,7 @@ async function getDiagnosis(req, res) {
                   answers[0] == 1 &&
                   answers[1] == 1
                 ) {
-                  selectedDiagnosis = 4;
+                  selectedDiagnosis = 94;
                   diagnosis = true;
                 } else {
                   diagnosis = false;
@@ -3116,7 +3118,7 @@ async function getDiagnosis(req, res) {
                   diagnosis = false;
                 }
               }
-
+              console.log(diagnosis);
               if (diagnosis) {
                 try {
                   let result = await Database.GetDbAccess({
