@@ -1987,16 +1987,17 @@ async function getDiagnosis(req, res) {
             if (answers[1] == 1) {
               if (answers.length < 11) {
                 let points = 0;
-                if (answers[3] == 1) points += 2;
+                if (answers[2] == 1) points += 2;
+                if (answers[3] == 1) points += 1;
                 if (answers[4] == 1) points += 1;
                 if (answers[5] == 1) points += 1;
                 if (answers[6] == 1) points += 1;
-                if (answers[7] == 1) points += 1;
-                if (answers[8] == 1) points += 2;
-                if (answers.length > 9) {
-                  if (answers[9] == 1) points += 1;
+                if (answers[7] == 1) points += 2;
+                if (answers.length > 8) {
+                  if (answers[8] == 1) points += 1;
                 }
                 //LOW
+                console.log(points)
                 if (points < 3) {
                   try {
                     let result = await Database.GetDbAccess({
@@ -2064,28 +2065,52 @@ async function getDiagnosis(req, res) {
                 let selectedDiagnosis;
                 if (bmi < 18.5) {
                   selectedDiagnosis = 37;
-                }
-                try {
-                  let result = await Database.GetDbAccess({
-                    collection: "diagnosis",
-                    query: { MsgId: selectedDiagnosis, TID },
-                  });
-                  if (result) {
-                    if (result.RefType === "Diagnostic Result") {
-                      result.RefType = "diagnosis";
-                    }
-                    if (result.RefType === "" && result.diagnosis2 === true) {
-                      result.RefType = "Diagnostic Result";
-                    }
-                    res.send({
-                      status: 200,
-                      message: "success",
-                      data: result,
+                  try {
+                    let result = await Database.GetDbAccess({
+                      collection: "diagnosis",
+                      query: { MsgId: selectedDiagnosis, TID },
                     });
-                  } else res.send({ status: 404, message: "Data Not Found" });
-                } catch (error) {
-                  res.send({ status: 400, message: error.message });
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: result,
+                      });
+                    } else res.send({ status: 404, message: "Data Not Found" });
+                  } catch (error) {
+                    res.send({ status: 400, message: error.message });
+                  }
                 }
+                else{
+                  try {
+                    let result = await Database.GetDbAccess({
+                      collection: "questions",
+                      query: { QID: 164, TID },
+                    });
+                    if (result) {
+                      if (result.RefType === "Diagnostic Result") {
+                        result.RefType = "diagnosis";
+                      }
+                      if (result.RefType === "" && result.diagnosis2 === true) {
+                        result.RefType = "Diagnostic Result";
+                      }
+                      res.send({
+                        status: 200,
+                        message: "success",
+                        data: result,
+                      });
+                    } else res.send({ status: 404, message: "Data Not Found" });
+                  } catch (error) {
+                    res.send({ status: 400, message: error.message });
+                  }
+                }
+               
               }
               if (SelectedOptions[2].QID == 93 && SelectedOptions[2].ID == 2) {
                 let points = 0;
@@ -3584,6 +3609,101 @@ async function getDiagnosis(req, res) {
             } catch (error) {
               res.send({ status: 400, message: error.message });
             }
+          }
+        }
+
+        if(SelectedOptions[0].QID == 164){
+          const answers = SelectedOptions.filter(elem => elem.ID);
+          let selectedDiagnosis;
+          if(SelectedOptions[3].QID == 167 && SelectedOptions[3].ID == 1)
+          {
+            if(age< 36){
+              selectedDiagnosis = 87;
+            }
+            else{
+              selectedDiagnosis = 88;
+            }
+          }
+          else{
+            if(SelectedOptions[3].QID == 167 && SelectedOptions[3].ID == 2 && age > 36)
+            {
+              //question
+              selectedDiagnosis = 90
+            }
+            if(SelectedOptions[3].QID == 167 && SelectedOptions[3].ID == 2 && age < 36){
+              if(answers.length == 0){
+                selectedDiagnosis = 79
+              }
+              else{
+                //thankyou
+                selectedDiagnosis = 89
+              }
+            }
+          }
+          try {
+            let result = await Database.GetDbAccess({
+              collection: "diagnosis",
+              query: { MsgId: selectedDiagnosis, TID },
+            });
+            if (result) {
+              if (result.RefType === "Diagnostic Result") {
+                result.RefType = "diagnosis";
+              }
+              if (result.RefType === "" && result.diagnosis2 === true) {
+                result.RefType = "Diagnostic Result";
+              }
+              res.send({
+                status: 200,
+                message: "success",
+                data: result,
+              });
+            } else
+              res.send({
+                status: 404,
+                message: "Data Not Found",
+              });
+            return;
+          } catch (error) {
+            res.send({ status: 400, message: error.message });
+            return;
+          }
+        }
+
+        if(SelectedOptions[0].QID == 168){
+          let selectedDiagnosis;
+          if(SelectedOptions.length == 1){
+            selectedDiagnosis = 79;
+          }
+          else{
+            if(SelectedOptions[1].QID == 169)
+            selectedDiagnosis = 89
+          }
+          try {
+            let result = await Database.GetDbAccess({
+              collection: "diagnosis",
+              query: { MsgId: selectedDiagnosis, TID },
+            });
+            if (result) {
+              if (result.RefType === "Diagnostic Result") {
+                result.RefType = "diagnosis";
+              }
+              if (result.RefType === "" && result.diagnosis2 === true) {
+                result.RefType = "Diagnostic Result";
+              }
+              res.send({
+                status: 200,
+                message: "success",
+                data: result,
+              });
+            } else
+              res.send({
+                status: 404,
+                message: "Data Not Found",
+              });
+            return;
+          } catch (error) {
+            res.send({ status: 400, message: error.message });
+            return;
           }
         }
         // ----------------------------------------------------------
